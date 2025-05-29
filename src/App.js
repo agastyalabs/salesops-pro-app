@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState, useEffect, useCallback } from &#39;react&#39;;
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Firebase services & config
 import { auth, db, currentAppId } from './utils/firebase';
