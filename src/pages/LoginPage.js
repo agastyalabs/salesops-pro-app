@@ -1,7 +1,6 @@
-// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { AtSign, KeyRound } from 'lucide-react';
-import { AuthPageLayout } from './AuthPageLayout';
+import AuthPageLayout from './AuthPageLayout'; // <-- Corrected import
 import { InputField } from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { auth } from '../utils/firebase';
