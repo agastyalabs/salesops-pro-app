@@ -1,11 +1,11 @@
 // src/pages/SignupPage.js
 import React, { useState } from 'react';
 import { AtSign, KeyRound } from 'lucide-react';
-import { AuthPageLayout } from './AuthPageLayout'; // Assuming AuthPageLayout.js is in the same folder
-import { InputField } from '../components/InputField'; // Assuming InputField.js is in src/components/
-import { LoadingSpinner } from '../components/LoadingSpinner'; // Assuming LoadingSpinner.js is in src/components/
-import { auth, db, currentAppId } from '../utils/firebase'; // Import from your firebase.js
-import { TRIAL_DURATION_DAYS } from '../config'; // Import from your config.js
+import { AuthPageLayout } from './AuthPageLayout';
+import { InputField } from '../components/InputField';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { auth, db, currentAppId } from '../utils/firebase';
+import { TRIAL_DURATION_DAYS } from '../config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, Timestamp, collection, query, limit, getDocs } from 'firebase/firestore';
 
@@ -17,7 +17,7 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
 
     const handleSignup = async (e) => {
         e.preventDefault();
-        setError(null); 
+        setError(null);
         setSuccess(null);
 
         if (password !== confirmPassword) {
@@ -42,28 +42,21 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
             const trialStartDate = serverTimestamp(); // Firestore server timestamp for start
             const jsTrialEndDate = new Date();
             jsTrialEndDate.setDate(jsTrialEndDate.getDate() + TRIAL_DURATION_DAYS);
-            const trialEndDate = Timestamp.fromDate(jsTrialEndDate); // Convert JS Date to Firestore Timestamp
+            const trialEndDate = Timestamp.fromDate(jsTrialEndDate);
 
-            const userDocRef = doc(db, `artifacts/<span class="math-inline">\{currentAppId\}/users/</span>{user.uid}`);
+            const userDocRef = doc(db, `artifacts/${currentAppId}/users/${user.uid}`);
             await setDoc(userDocRef, {
                 uid: user.uid,
                 email: user.email,
-                role: isFirstUser ? 'admin' : 'user', // Assign 'admin' role if it's the first user
+                role: isFirstUser ? 'admin' : 'user',
                 createdAt: serverTimestamp(),
                 planStatus: 'trial',
                 trialStartDate: trialStartDate,
                 trialEndDate: trialEndDate,
             });
 
-            // Optional: Send verification email
-            // if (auth.currentUser) { // Ensure user is available
-            //    await sendEmailVerification(auth.currentUser);
-            //    setSuccess(`Signup successful! Your ${TRIAL_DURATION_DAYS}-day trial has started. Please check your email to verify your account before logging in.`);
-            // } else {
-            setSuccess(`Signup successful! ${isFirstUser ? 'You have been assigned as an Admin. ' : ''}Your ${TRIAL_DURATION_DAYS}-day trial has started. You can now log in.`); 
-            // }
-            setCurrentViewFunction('login'); // Or 'dashboard' if auto-login after signup, or a "check email" page
-
+            setSuccess(`Signup successful! ${isFirstUser ? 'You have been assigned as an Admin. ' : ''}Your ${TRIAL_DURATION_DAYS}-day trial has started. You can now log in.`);
+            setCurrentViewFunction('login');
         } catch (error) {
             console.error("Error signing up:", error);
             if (error.code === 'auth/email-already-in-use') {
@@ -81,51 +74,51 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
     return (
         <AuthPageLayout title="Create Your Account" theme={theme}>
             <form onSubmit={handleSignup} className="space-y-4">
-                <InputField 
-                    icon={AtSign} 
-                    label="Email Address" 
-                    id="email-signup" 
-                    name="email" 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="you@example.com" 
-                    required 
+                <InputField
+                    icon={AtSign}
+                    label="Email Address"
+                    id="email-signup"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
                 />
-                <InputField 
-                    icon={KeyRound} 
-                    label="Password" 
-                    id="password-signup" 
-                    name="password" 
-                    type="password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    placeholder="••••••••" 
-                    required 
+                <InputField
+                    icon={KeyRound}
+                    label="Password"
+                    id="password-signup"
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
                 />
-                <InputField 
-                    icon={KeyRound} 
-                    label="Confirm Password" 
-                    id="confirmPassword-signup" 
-                    name="confirmPassword" 
-                    type="password" 
-                    value={confirmPassword} 
-                    onChange={(e) => setConfirmPassword(e.target.value)} 
-                    placeholder="••••••••" 
-                    required 
+                <InputField
+                    icon={KeyRound}
+                    label="Confirm Password"
+                    id="confirmPassword-signup"
+                    name="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
                 />
-                <button 
-                    type="submit" 
-                    disabled={isLoading} 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 disabled:opacity-70 flex items-center justify-center"
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
                 >
-                    {isLoading ? <LoadingSpinner text="" size="sm"/> : `Start ${TRIAL_DURATION_DAYS}-Day Free Trial`}
+                    {isLoading ? <LoadingSpinner text="" size="sm" /> : `Start ${TRIAL_DURATION_DAYS}-Day Free Trial`}
                 </button>
             </form>
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{' '}
-                <button 
-                    onClick={() => setCurrentViewFunction('login')} 
+                <button
+                    onClick={() => setCurrentViewFunction('login')}
                     className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                     Log in
