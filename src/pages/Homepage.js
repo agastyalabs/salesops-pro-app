@@ -22,7 +22,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                         <h1 className="text-2xl font-bold ml-2.5 text-gray-800 dark:text-white">SalesOps Pro</h1>
                     </div>
                     <div className="flex items-center space-x-4">
-                         <button
+                        <button
                             onClick={toggleTheme}
                             className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                             aria-label="Toggle theme"
@@ -67,7 +67,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                         </p>
                         <button 
                             onClick={() => setCurrentViewFunction(isAuthenticated ? 'dashboard' : 'signup')}
-                            className="bg-white hover:bg-gray-100 text-blue-600 dark:text-blue-500 dark:hover:bg-gray-200 font-bold py-3 px-8 rounded-lg shadow-xl hover:shadow-2xl text-lg transition-all duration-300 transform hover:scale-105 animate-fadeInUp animation-delay-600 flex items-center mx-auto"
+                            className="bg-white hover:bg-gray-100 text-blue-600 dark:text-blue-500 dark:hover:bg-gray-200 font-bold py-3 px-8 rounded-lg shadow-xl hover:shadow-2xl text-lg transition-all duration-200 flex items-center justify-center mx-auto"
                         >
                             {isAuthenticated ? 'Go to Dashboard' : `Start Your ${TRIAL_DURATION_DAYS}-Day Free Trial`} <ArrowRight size={20} className="ml-2" />
                         </button>
@@ -84,7 +84,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                             {features.map((feature, index) => (
-                                <div key={feature.name} className="bg-gray-50 dark:bg-gray-850 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 animate-fadeInUp" style={{animationDelay: `${index * 150 + 300}ms`}}>
+                                <div key={feature.name} className="bg-gray-50 dark:bg-gray-850 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
                                     <div className={`p-3 inline-block rounded-full bg-opacity-10 mb-4 ${feature.color.replace('text-', 'bg-')}`}>
                                         <feature.icon size={28} className={feature.color} />
                                     </div>
