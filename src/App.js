@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 // Helper Components
-import AlertMessage from './components/AlertMessage'; // <-- FIXED: use default import
+import AlertMessage from './components/AlertMessage';
 import { LoadingSpinner } from './components/LoadingSpinner';
 
 // Page/View Components
@@ -220,6 +220,8 @@ function App() {
             theme={theme}
             setTheme={setTheme}
             handleSignOut={handleSignOut}
+            isAuthenticated={!!authUser}
+            toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           />
         );
     }
