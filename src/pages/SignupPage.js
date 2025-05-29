@@ -3,8 +3,9 @@ import { AtSign, KeyRound, UserRound } from 'lucide-react';
 import AuthPageLayout from './AuthPageLayout';
 import InputField from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => {
     const [email, setEmail] = useState('');
@@ -22,6 +23,13 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
             if (fullName) {
                 await updateProfile(userCredential.user, { displayName: fullName });
             }
+            // CREATE USER PROFILE IN FIRESTORE
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+                uid: userCredential.user.uid,
+                name: fullName,
+                email: userCredential.user.email,
+                createdAt: serverTimestamp(),
+            });
             setSuccess('Account created successfully!');
             setCurrentViewFunction('dashboard');
         } catch (error) {
