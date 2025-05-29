@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 // Helper Components
-import { AlertMessage } from './components/AlertMessage';
+import AlertMessage from './components/AlertMessage'; // <-- FIXED: use default import
 import { LoadingSpinner } from './components/LoadingSpinner';
 
 // Page/View Components
