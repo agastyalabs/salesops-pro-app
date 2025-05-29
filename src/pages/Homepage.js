@@ -1,9 +1,13 @@
-// src/pages/Homepage.js
 import React from 'react';
 import { Briefcase, Moon, Sun, ArrowRight, Target, Zap, LineChart as LucideLineChart, UsersRound, ShieldCheck } from 'lucide-react';
 import { TRIAL_DURATION_DAYS } from '../config'; // Import from config
 
-const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated }) => {
+const Homepage = ({
+    navigateToView,
+    theme,
+    toggleTheme,
+    isAuthenticated
+}) => {
     const features = [
         { name: "Intelligent Lead Management", description: "Capture, track, score, and distribute leads efficiently to close more deals faster.", icon: Target, color: "text-blue-500" },
         { name: "Streamlined Deal Tracking", description: "Visualize your sales pipeline, manage stages, and forecast revenue with precision.", icon: Briefcase, color: "text-green-500" },
@@ -17,7 +21,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
         <div className={`min-h-screen flex flex-col font-inter ${theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
             <header className="py-4 px-6 md:px-10 shadow-sm sticky top-0 z-40 bg-white dark:bg-gray-800/80 backdrop-blur-md">
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex items-center cursor-pointer" onClick={() => setCurrentViewFunction('homepage')}>
+                    <div className="flex items-center cursor-pointer" onClick={() => navigateToView('homepage')}>
                         <Briefcase size={28} className="text-blue-600 dark:text-blue-400" />
                         <h1 className="text-2xl font-bold ml-2.5 text-gray-800 dark:text-white">SalesOps Pro</h1>
                     </div>
@@ -31,7 +35,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                         </button>
                         {isAuthenticated ? (
                             <button 
-                                onClick={() => setCurrentViewFunction('dashboard')}
+                                onClick={() => navigateToView('dashboard')}
                                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
                             >
                                 Dashboard
@@ -39,13 +43,13 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                         ) : (
                             <>
                                 <button 
-                                    onClick={() => setCurrentViewFunction('login')}
+                                    onClick={() => navigateToView('login')}
                                     className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
                                 >
                                     Login
                                 </button>
                                 <button 
-                                    onClick={() => setCurrentViewFunction('signup')}
+                                    onClick={() => navigateToView('signup')}
                                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
                                 >
                                     Sign Up Free
@@ -66,7 +70,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                             SalesOps Pro provides the tools you need to streamline processes, boost productivity, and drive revenue growth. All in one powerful, intuitive platform.
                         </p>
                         <button 
-                            onClick={() => setCurrentViewFunction(isAuthenticated ? 'dashboard' : 'signup')}
+                            onClick={() => navigateToView(isAuthenticated ? 'dashboard' : 'signup')}
                             className="bg-white hover:bg-gray-100 text-blue-600 dark:text-blue-500 dark:hover:bg-gray-200 font-bold py-3 px-8 rounded-lg shadow-xl hover:shadow-2xl text-lg transition-all duration-200 flex items-center justify-center mx-auto"
                         >
                             {isAuthenticated ? 'Go to Dashboard' : `Start Your ${TRIAL_DURATION_DAYS}-Day Free Trial`} <ArrowRight size={20} className="ml-2" />
@@ -117,7 +121,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
                     animation-duration: 0.7s;
                     animation-fill-mode: both;
                 }
-                .dark .bg-gray-850 { background-color: #161d2a; } /* Ensure this custom color is defined or handled by Tailwind config */
+                .dark .bg-gray-850 { background-color: #161d2a; }
             `}</style>
         </div>
     );
