@@ -66,7 +66,7 @@ try {
     app = initializeApp(firebaseConfig); 
     auth = getAuth(app); 
     db = getFirestore(app);
-    // if (firebaseConfig.measurementId) { 
+    // if (firebaseConfig.measurementId && typeof getAnalytics === 'function') { // Check if getAnalytics is defined
     //   analytics = getAnalytics(app);
     // }
 } catch (e) { 
@@ -102,7 +102,7 @@ const formatDateForInput = (timestamp) => {
         dateToFormat = timestamp.toDate();
     } else if (timestamp instanceof Date) {
         dateToFormat = timestamp;
-    } else if (timestamp) { // Attempt to parse if it's a string e.g. from formValues
+    } else if (timestamp) { 
         dateToFormat = new Date(timestamp);
     }
 
@@ -174,7 +174,7 @@ const Tooltip = ({ text, children }) => {
 const AlertMessage = ({ message, type, onDismiss }) => { 
     if (!message) return null;
     const SvgIcon = type === 'error' ? AlertTriangle : type === 'success' ? CheckCircle : AlertTriangle;
-    const baseClasses = "p-3 my-2 rounded-md shadow-sm text-sm flex items-center justify-between pointer-events-auto"; // Added pointer-events-auto
+    const baseClasses = "p-3 my-2 rounded-md shadow-sm text-sm flex items-center justify-between pointer-events-auto";
     const typeClasses = {
         error: 'bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200 border-l-4 border-red-500',
         success: 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200 border-l-4 border-green-500',
@@ -184,7 +184,7 @@ const AlertMessage = ({ message, type, onDismiss }) => {
 };
 
 const LoadingSpinner = ({ text = "Loading...", size="md" }) => { 
-    const sizeClasses = {sm: "h-5 w-5", md: "h-8 w-8", lg: "h-12 w-12"}; // Adjusted sizes
+    const sizeClasses = {sm: "h-5 w-5", md: "h-8 w-8", lg: "h-12 w-12"};
     return (<div className="flex flex-col items-center justify-center h-full py-2 text-center"><svg className={`animate-spin ${sizeClasses[size]} text-blue-600 dark:text-blue-400 mb-1`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>{text && <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{text}</p>}</div>);
 };
 
@@ -230,7 +230,7 @@ const ActivityFeed = ({ activities, isLoading, entityType, navigateToView }) => 
 
 
 // --- Main View Components ---
-const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated }) => { /* ... Full Homepage Code from Phase 6.A ... */ 
+const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated }) => { 
     const features = [
         { name: "Intelligent Lead Management", description: "Capture, track, score, and distribute leads efficiently to close more deals faster.", icon: Target, color: "text-blue-500" },
         { name: "Streamlined Deal Tracking", description: "Visualize your sales pipeline, manage stages, and forecast revenue with precision.", icon: Briefcase, color: "text-green-500" },
@@ -240,7 +240,7 @@ const Homepage = ({ setCurrentViewFunction, theme, toggleTheme, isAuthenticated 
         { name: "Customizable & Secure", description: "Tailor the platform to your needs with robust security and permission controls.", icon: ShieldCheck, color: "text-red-500" },
     ];
     return ( <div className={`min-h-screen flex flex-col font-inter ${theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}> <header className="py-4 px-6 md:px-10 shadow-sm sticky top-0 z-40 bg-white dark:bg-gray-800/80 backdrop-blur-md"> <div className="container mx-auto flex justify-between items-center"> <div className="flex items-center cursor-pointer" onClick={() => setCurrentViewFunction('homepage')}> <Briefcase size={28} className="text-blue-600 dark:text-blue-400" /> <h1 className="text-2xl font-bold ml-2.5 text-gray-800 dark:text-white">SalesOps Pro</h1> </div> <div className="flex items-center space-x-4"> <button onClick={toggleTheme} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle theme"> {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />} </button> {isAuthenticated ? ( <button onClick={() => setCurrentViewFunction('dashboard')} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"> Dashboard </button> ) : ( <> <button onClick={() => setCurrentViewFunction('login')} className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 px-4 rounded-lg transition-colors text-sm"> Login </button> <button onClick={() => setCurrentViewFunction('signup')} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"> Sign Up Free </button> </> )} </div> </div> </header> <main className="flex-grow"> <section className="py-20 md:py-32 text-center bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-700 dark:via-blue-600 dark:to-indigo-700 text-white"> <div className="container mx-auto px-6"> <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fadeInUp"> Elevate Your Sales Operations </h2> <p className="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto opacity-90 animate-fadeInUp animation-delay-300"> SalesOps Pro provides the tools you need to streamline processes, boost productivity, and drive revenue growth. All in one powerful, intuitive platform. </p> <button onClick={() => setCurrentViewFunction(isAuthenticated ? 'dashboard' : 'signup')} className="bg-white hover:bg-gray-100 text-blue-600 dark:text-blue-500 dark:hover:bg-gray-200 font-bold py-3 px-8 rounded-lg shadow-xl hover:shadow-2xl text-lg transition-all duration-300 transform hover:scale-105 animate-fadeInUp animation-delay-600 flex items-center mx-auto"> {isAuthenticated ? 'Go to Dashboard' : `Start Your ${TRIAL_DURATION_DAYS}-Day Free Trial`} <ArrowRight size={20} className="ml-2" /> </button> </div> </section> <section className="py-16 md:py-24 bg-white dark:bg-gray-800"> <div className="container mx-auto px-6"> <div className="text-center mb-12 md:mb-16"> <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">Powerful Features, Seamless Experience</h3> <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"> Everything you need to supercharge your sales team and achieve your targets. </p> </div> <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"> {features.map((feature, index) => ( <div key={feature.name} className="bg-gray-50 dark:bg-gray-850 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 animate-fadeInUp" style={{animationDelay: `${index * 150 + 300}ms`}}> <div className={`p-3 inline-block rounded-full bg-opacity-10 mb-4 ${feature.color.replace('text-', 'bg-')}`}> <feature.icon size={28} className={feature.color} /> </div> <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{feature.name}</h4> <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.description}</p> </div> ))} </div> </div> </section> </main> <footer className="py-8 text-center bg-gray-100 dark:bg-gray-850 border-t dark:border-gray-700"> <div className="container mx-auto px-6"> <p className="text-gray-600 dark:text-gray-400 text-sm"> &copy; {new Date().getFullYear()} SalesOps Pro. All rights reserved. </p> </div> </footer> <style>{`.animation-delay-300 { animation-delay: 0.3s; } .animation-delay-600 { animation-delay: 0.6s; } @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } .animate-fadeInUp { animation-name: fadeInUp; animation-duration: 0.7s; animation-fill-mode: both; } .dark .bg-gray-850 { background-color: #161d2a; }`}</style> </div> ); };
-const AuthPageLayout = ({ children, title, theme }) => { /* ... Full AuthPageLayout Code from Phase 6.A ... */ return ( <div className={`min-h-screen flex flex-col items-center justify-center font-inter p-4 ${theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}> <div className="flex items-center mb-8"> <Briefcase size={32} className="text-blue-600 dark:text-blue-400" /> <h1 className="text-3xl font-bold ml-3 text-gray-800 dark:text-white">SalesOps Pro</h1> </div> <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl"> <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">{title}</h2> {children} </div> <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400"> &copy; {new Date().getFullYear()} SalesOps Pro. </p> </div> ); };
+const AuthPageLayout = ({ children, title, theme }) => { return ( <div className={`min-h-screen flex flex-col items-center justify-center font-inter p-4 ${theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}> <div className="flex items-center mb-8"> <Briefcase size={32} className="text-blue-600 dark:text-blue-400" /> <h1 className="text-3xl font-bold ml-3 text-gray-800 dark:text-white">SalesOps Pro</h1> </div> <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl"> <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">{title}</h2> {children} </div> <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400"> &copy; {new Date().getFullYear()} SalesOps Pro. </p> </div> ); };
 const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => { /* ... Full SignupPage Code from Phase 6.A ... */ return <div>Signup</div>; };
 const LoginPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => { /* ... Full LoginPage Code from Phase 6.A ... */ return <div>Login</div>; };
 const Dashboard = ({ userId, userProfile, db, setError, setSuccess, currentAppId, navigateToView }) => { /* ... Full Dashboard Code from "Mega Enhancement Phase" (Phase 5 with charts & Phase 6.A Punch In/Out) ... */ return <div>Dashboard</div>; };
@@ -261,7 +261,7 @@ function App() {
     const [currentUserId, setCurrentUserId] = useState(null); 
     const [isAuthReady, setIsAuthReady] = useState(false);
     const [currentView, setCurrentView] = useState('homepage'); 
-    const [activeParams, setActiveParams] = useState({}); // For passing params to views if needed
+    const [activeParams, setActiveParams] = useState({}); 
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
     const [appError, setAppError] = useState(null);
     const [appSuccess, setAppSuccess] = useState(null);
@@ -269,7 +269,7 @@ function App() {
     const navigateToView = useCallback((view, params = {}) => {
         setAppError(null); setAppSuccess(null); 
         setCurrentView(view);
-        setActiveParams(params); // Store params for the view to potentially use
+        setActiveParams(params); 
     }, []);
 
     useEffect(() => {
@@ -330,7 +330,7 @@ function App() {
                 });
             } else { 
                 setAuthUser(null); setCurrentUserId(null); setCurrentUserProfile(null);
-                if (!['homepage', 'login', 'signup'].includes(currentView)) { // Allow admin view to be accessed if bookmarked by an admin then session expires
+                if (!['homepage', 'login', 'signup'].includes(currentView)) {
                     navigateToView('login');
                 }
                 if (!isAuthReady) setIsAuthReady(true);
@@ -343,7 +343,7 @@ function App() {
             if (document.head.contains(markerClusterCSS)) document.head.removeChild(markerClusterCSS);
             if (document.head.contains(markerClusterDefaultCSS)) document.head.removeChild(markerClusterDefaultCSS);
         };
-    }, [navigateToView, isAuthReady]); // Removed currentView from deps to avoid loop on redirect
+    }, [navigateToView, isAuthReady]);
 
     const handleSignOut = async () => { 
         try { 
@@ -369,7 +369,7 @@ function App() {
     
     const GlobalAlerts = () => ( 
         (appError || appSuccess) ? 
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md p-0 z-[1000] pointer-events-auto"> {/* Changed to pointer-events-auto for dismiss */}
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md p-0 z-[1000] pointer-events-auto">
             {appError && <AlertMessage message={appError} type="error" onDismiss={clearMessages} />}
             {appSuccess && <AlertMessage message={appSuccess} type="success" onDismiss={clearMessages} />}
         </div> 
