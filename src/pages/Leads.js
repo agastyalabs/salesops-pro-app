@@ -6,7 +6,7 @@ import {
   Users, PlusCircle, Search, Filter, UserCircle, Building, Mail, Phone, DollarSign, Edit3, Trash2, TrendingUp,
 } from 'lucide-react';
 import { Modal } from '../components/Modal';
-import { InputField } from '../components/InputField';
+import InputField from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Tooltip } from '../components/Tooltip';
 import { ActivityFeed } from '../components/ActivityFeed'; // Assuming ActivityFeed.js is in src/components/
