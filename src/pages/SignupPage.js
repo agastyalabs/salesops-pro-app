@@ -7,6 +7,8 @@ import { auth, db } from '../utils/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
+const appIdString = "1:555072601372:web:af3a40f8d9232012018ed9";
+
 const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -23,8 +25,8 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
             if (fullName) {
                 await updateProfile(userCredential.user, { displayName: fullName });
             }
-            // CREATE USER PROFILE IN FIRESTORE
-            await setDoc(doc(db, "users", userCredential.user.uid), {
+            // WRITE USER PROFILE TO NESTED PATH REQUIRED BY SECURITY RULES
+            await setDoc(doc(db, "artifacts", appIdString, "users", userCredential.user.uid), {
                 uid: userCredential.user.uid,
                 name: fullName,
                 email: userCredential.user.email,
