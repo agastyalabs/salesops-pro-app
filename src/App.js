@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect, useCallback } from 'react';
 
 // Firebase services & config
@@ -7,7 +6,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot, serverTimestamp, Timestamp, setDoc } from 'firebase/firestore';
 
 // Import constants
-import { TRIAL\_DURATION\_DAYS } from './config';
+import { TRIAL_DURATION_DAYS } from './config';
 
 // Helper Components
 import { AlertMessage } from './components/AlertMessage';
@@ -29,16 +28,21 @@ import SettingsPage from './pages/SettingsPage';
 
 // Icons for App shell
 import {
-Briefcase, LayoutDashboard, Users, FileText as ContactsIcon, ListChecks, History, UserCog, Settings as SettingsIcon, LogOut, Moon, Sun, Gift
+  Briefcase, LayoutDashboard, Users, FileText as ContactsIcon, ListChecks, History, UserCog, Settings as SettingsIcon, LogOut, Moon, Sun, Gift
 } from 'lucide-react'; // Renamed FileText to ContactsIcon for clarity
 
 function App() {
-const [authUser, setAuthUser] = useState(null);
-const [currentUserProfile, setCurrentUserProfile] = useState(null);
-const [currentUserId, setCurrentUserId] = useState(null);
-const [isAuthReady, setIsAuthReady] = useState(false);
-const [currentView, setCurrentView] = useState('homepage');
-const [activeParams, setActiveParams] = useState({});
-const [theme, setTheme] = useState(() =\> localStorage.getItem('theme') || 'light');
-const [appError, setAppError] = useState(null);
-const [appSuccess, setAppSuccess] = useState(null);
+  const [authUser, setAuthUser] = useState(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [currentView, setCurrentView] = useState('homepage');
+  const [activeParams, setActiveParams] = useState({});
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [appError, setAppError] = useState(null);
+  const [appSuccess, setAppSuccess] = useState(null);
+
+  // ...rest of your App component logic
+}
+
+export default App;
