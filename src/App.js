@@ -66,7 +66,7 @@ try {
     app = initializeApp(firebaseConfig); 
     auth = getAuth(app); 
     db = getFirestore(app);
-    // if (firebaseConfig.measurementId && typeof getAnalytics === 'function') { // Check if getAnalytics is defined
+    // if (firebaseConfig.measurementId && typeof getAnalytics === 'function') { 
     //   analytics = getAnalytics(app);
     // }
 } catch (e) { 
@@ -254,7 +254,6 @@ const SettingsPage = ({ userId, userProfile, db, setError, setSuccess, theme, to
 
 
 // --- App Component (Main structure, navigation, routing) ---
-// This is the main orchestrator, using the fully defined components above.
 function App() {
     const [authUser, setAuthUser] = useState(null); 
     const [currentUserProfile, setCurrentUserProfile] = useState(null); 
@@ -330,7 +329,7 @@ function App() {
                 });
             } else { 
                 setAuthUser(null); setCurrentUserId(null); setCurrentUserProfile(null);
-                if (!['homepage', 'login', 'signup'].includes(currentView)) {
+                if (!['homepage', 'login', 'signup'].includes(currentView)) { // Allow admin view to be accessed if bookmarked by an admin then session expires
                     navigateToView('login');
                 }
                 if (!isAuthReady) setIsAuthReady(true);
@@ -339,11 +338,12 @@ function App() {
         });
         return () => {
             unsubAuth();
-            if (document.head.contains(leafletCSS)) document.head.removeChild(leafletCSS);
-            if (document.head.contains(markerClusterCSS)) document.head.removeChild(markerClusterCSS);
-            if (document.head.contains(markerClusterDefaultCSS)) document.head.removeChild(markerClusterDefaultCSS);
+            // Only remove if they were added by this component
+            if (leafletCSS.parentNode === document.head) document.head.removeChild(leafletCSS);
+            if (markerClusterCSS.parentNode === document.head) document.head.removeChild(markerClusterCSS);
+            if (markerClusterDefaultCSS.parentNode === document.head) document.head.removeChild(markerClusterDefaultCSS);
         };
-    }, [navigateToView, isAuthReady]);
+    }, [navigateToView, isAuthReady]); // Removed currentView from deps
 
     const handleSignOut = async () => { 
         try { 
