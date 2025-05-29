@@ -6,7 +6,7 @@ import {
   Briefcase, PlusCircle, Search, Filter, Tag, Building, UserCircle, DollarSign, CalendarDays, Edit3, Trash2, TrendingUp,
 } from 'lucide-react';
 import { Modal } from '../components/Modal';
-import { InputField } from '../components/InputField';
+import InputField from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Tooltip } from '../components/Tooltip';
 import { ActivityFeed } from '../components/ActivityFeed';
