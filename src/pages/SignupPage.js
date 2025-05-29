@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AtSign, KeyRound, UserRound } from 'lucide-react';
 import AuthPageLayout from './AuthPageLayout';
-import { InputField } from '../components/InputField';
+import InputField from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { auth } from '../utils/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
