@@ -7,6 +7,7 @@ import { auth, db } from '../utils/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
+// Use your actual App ID from Firestore rules here
 const appIdString = "1:555072601372:web:af3a40f8d9232012018ed9";
 
 const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => {
@@ -17,33 +18,37 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
 
     const handleSignup = async (e) => {
         e.preventDefault();
-        setError(null);
-        setSuccess(null);
+        setError && setError(null);
+        setSuccess && setSuccess(null);
         setIsLoading(true);
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             if (fullName) {
                 await updateProfile(userCredential.user, { displayName: fullName });
             }
-            // WRITE USER PROFILE TO NESTED PATH REQUIRED BY SECURITY RULES
-            await setDoc(doc(db, "artifacts", appIdString, "users", userCredential.user.uid), {
-                uid: userCredential.user.uid,
-                name: fullName,
-                email: userCredential.user.email,
-                createdAt: serverTimestamp(),
-            });
-            setSuccess('Account created successfully!');
-            setCurrentViewFunction('dashboard');
+            // Write the user profile to the nested path required by your Firestore rules
+            await setDoc(
+                doc(db, "artifacts", appIdString, "users", userCredential.user.uid),
+                {
+                    uid: userCredential.user.uid,
+                    name: fullName,
+                    email: userCredential.user.email,
+                    createdAt: serverTimestamp(),
+                }
+            );
+            setSuccess && setSuccess('Account created successfully!');
+            setCurrentViewFunction && setCurrentViewFunction('dashboard');
         } catch (error) {
-            console.error("Error signing up:", error);
-            if (error.code === 'auth/email-already-in-use') {
-                setError('This email is already in use. Please log in or use another email.');
-            } else if (error.code === 'auth/invalid-email') {
-                setError('Invalid email address. Please check and try again.');
-            } else if (error.code === 'auth/weak-password') {
-                setError('Password should be at least 6 characters.');
-            } else {
-                setError(error.message || "An unknown error occurred during signup.");
+            if (setError) {
+                if (error.code === 'auth/email-already-in-use') {
+                    setError('This email is already in use. Please log in or use another email.');
+                } else if (error.code === 'auth/invalid-email') {
+                    setError('Invalid email address. Please check and try again.');
+                } else if (error.code === 'auth/weak-password') {
+                    setError('Password should be at least 6 characters.');
+                } else {
+                    setError(error.message || "An unknown error occurred during signup.");
+                }
             }
         } finally {
             setIsLoading(false);
@@ -97,7 +102,7 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{' '}
                 <button
-                    onClick={() => setCurrentViewFunction('login')}
+                    onClick={() => setCurrentViewFunction && setCurrentViewFunction('login')}
                     className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                     Log in
