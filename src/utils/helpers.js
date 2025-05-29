@@ -1,5 +1,3 @@
-// src/utils/helpers.js
-import { Timestamp } from 'firebase/firestore'; // Import Timestamp for type checking if needed
 import { currentAppId } from './firebase'; // Import currentAppId for User-Agent in fetch
 
 export const formatDate = (timestamp) => {
@@ -74,7 +72,7 @@ export const fetchAddressFromCoordinates = async (latitude, longitude) => {
         return "Invalid coordinates";
     }
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=<span class="math-inline">\{latitude\}&lon\=</span>{longitude}`, {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`, {
             headers: { 'User-Agent': `SalesOpsProApp/${currentAppId || 'UnknownApp'}` }
         });
         if (!response.ok) {
