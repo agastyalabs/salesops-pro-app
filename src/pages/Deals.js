@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, onSnapshot, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, Timestamp, where, getCountFromServer, getDocs, limit } from 'firebase/firestore';
-import { Briefcase, PlusCircle, Search, Filter, Tag, Building, UserCircle, DollarSign, CalendarDays, Edit3, Trash2, TrendingUp } from 'lucide-react';
+import {
+  collection, query, onSnapshot, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, Timestamp, where, getCountFromServer, getDocs, limit,
+} from 'firebase/firestore';
+import {
+  Briefcase, PlusCircle, Search, Filter, Tag, Building, UserCircle, DollarSign, CalendarDays, Edit3, Trash2, TrendingUp,
+} from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { InputField } from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -16,7 +20,7 @@ const Deals = ({ userId, userProfile, db, setError, setSuccess, currentAppId, na
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStage, setFilterStage] = useState("");
 
-  // ... rest of your Deals component logic ...
+  // ...rest of your Deals component logic
 };
 
 export default Deals;
