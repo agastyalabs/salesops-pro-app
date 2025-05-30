@@ -1,50 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   collection,
   query,
-  onSnapshot,
   getDocs,
   orderBy,
-  limit,
-  addDoc,
-  serverTimestamp,
+  limit
 } from 'firebase/firestore';
 import {
   Users,
   Briefcase,
-  CheckSquare,
-  CalendarDays,
-  UsersRound,
-  Clock,
-  LogIn,
-  LogOut,
-  ArrowRight,
-  BarChart3,
   ActivityIcon,
-  PieChart as LucidePieChart,
-  ListChecks,
-  Trophy,
-  TrendingUp,
   UserCheck,
-  Mail,
-  Phone,
-  AlertCircle,
-  UserPlus,
-  Sparkles,
 } from 'lucide-react';
-import {
-  PieChart,
-  Pie,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell,
-} from 'recharts';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { CHART_COLORS } from '../config';
 
@@ -80,16 +47,24 @@ const Dashboard = ({
 
   // Fetch dashboard stats (adapt this to your real data model)
   useEffect(() => {
-    if (!db || !userId) return;
+    if (!db || !userId || !currentAppId) return;
     setLoading(true);
 
     const fetchStats = async () => {
       try {
         // Example: count leads, deals, activities, contacts for the user
-        const leadsSnap = await getDocs(query(collection(db, 'leads'), limit(1)));
-        const dealsSnap = await getDocs(query(collection(db, 'deals'), limit(1)));
-        const activitiesSnap = await getDocs(query(collection(db, 'activities'), limit(1)));
-        const contactsSnap = await getDocs(query(collection(db, 'contacts'), limit(1)));
+        const leadsSnap = await getDocs(
+          query(collection(db, `artifacts/${currentAppId}/users/${userId}/leads`), limit(1000))
+        );
+        const dealsSnap = await getDocs(
+          query(collection(db, `artifacts/${currentAppId}/users/${userId}/deals`), limit(1000))
+        );
+        const activitiesSnap = await getDocs(
+          query(collection(db, `artifacts/${currentAppId}/users/${userId}/activities`), limit(1000))
+        );
+        const contactsSnap = await getDocs(
+          query(collection(db, `artifacts/${currentAppId}/users/${userId}/contacts`), limit(1000))
+        );
         setDashboardData({
           leads: leadsSnap.size,
           deals: dealsSnap.size,
@@ -97,16 +72,15 @@ const Dashboard = ({
           contacts: contactsSnap.size,
         });
       } catch (err) {
-        setError('Failed to load dashboard data.');
+        setError && setError('Failed to load dashboard data.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
-  }, [db, userId, setError]);
+  }, [db, userId, currentAppId, setError]);
 
-  // Main render
   if (loading) {
     return <LoadingSpinner />;
   }
