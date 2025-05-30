@@ -1,11 +1,5 @@
-import NavigationBar from '../components/NavigationBar';
-
-// Inside your component's return:
-<NavigationBar
-  onBack={() => navigateToView('dashboard')}
-  goToDashboard={() => navigateToView('dashboard')}
-/>
 import React, { useState, useEffect, useCallback } from 'react';
+import NavigationBar from '../components/NavigationBar';
 import {
   collection, query, onSnapshot, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, Timestamp, where, getCountFromServer, getDocs, limit,
 } from 'firebase/firestore';
@@ -28,6 +22,16 @@ const Deals = ({ userId, userProfile, db, setError, setSuccess, currentAppId, na
   const [filterStage, setFilterStage] = useState("");
 
   // ...rest of your Deals component logic
+
+  return (
+    <>
+      <NavigationBar
+        onBack={() => navigateToView('dashboard')}
+        goToDashboard={() => navigateToView('dashboard')}
+      />
+      {/* ...rest of your Deals page */}
+    </>
+  );
 };
 
 export default Deals;
