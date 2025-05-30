@@ -1,214 +1,340 @@
-import React from 'react';
-import { Briefcase, Moon, Sun, ArrowRight, Target, Zap, LineChart as LucideLineChart, UsersRound, ShieldCheck, Star, Smile } from 'lucide-react';
-import { TRIAL_DURATION_DAYS } from '../config';
+import React, { useState } from "react";
+import {
+  ChevronRight,
+  LogIn,
+  Users,
+  Briefcase,
+  Zap,
+  Headset,
+  ShieldCheck,
+  ArrowRight,
+  ArrowUpRight,
+  Quote,
+} from "lucide-react";
 
-const testimonials = [
-  {
-    name: "Alex Johnson",
-    company: "Acme Corp",
-    feedback: "SalesOps Pro helped us organize our field sales and double our conversion rate in just a few months!",
-    icon: Star
-  },
-  {
-    name: "Priya Singh",
-    company: "TechWave",
-    feedback: "The automation features are a game-changer for our sales team. Love the modern UI.",
-    icon: Smile
-  }
+// Dummy logo URLs for "Trusted By"
+const logos = [
+  "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
+  "https://upload.wikimedia.org/wikipedia/commons/4/44/Salesforce_logo.svg",
+  "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+  "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+  "https://upload.wikimedia.org/wikipedia/commons/0/08/Google_Logo.svg",
+  "https://upload.wikimedia.org/wikipedia/commons/2/2f/Logo_Telegram.svg",
 ];
 
-const Homepage = ({
-  navigateToView,
-  theme,
-  toggleTheme,
-  isAuthenticated
-}) => {
-  const features = [
-    { name: "Intelligent Lead Management", description: "Capture, track, score, and distribute leads efficiently to close more deals faster.", icon: Target, color: "text-blue-500" },
-    { name: "Streamlined Deal Tracking", description: "Visualize your sales pipeline, manage stages, and forecast revenue with precision.", icon: Briefcase, color: "text-green-500" },
-    { name: "Comprehensive Contact Hub", description: "Maintain a 360-degree view of your contacts, interactions, and history.", icon: UsersRound, color: "text-indigo-500" },
-    { name: "Actionable Sales Analytics", description: "Gain deep insights into performance with customizable reports and dashboards.", icon: LucideLineChart, color: "text-purple-500" },
-    { name: "Workflow Automation", description: "Automate repetitive sales tasks, follow-ups, and notifications to boost productivity.", icon: Zap, color: "text-yellow-500" },
-    { name: "Customizable & Secure", description: "Tailor the platform to your needs with robust security and permission controls.", icon: ShieldCheck, color: "text-red-500" },
-  ];
+// Dummy use case data
+const useCases = [
+  {
+    title: "Sales Automation",
+    description:
+      "Automate lead capture, distribution, and follow-up to help your sales team close more deals, faster.",
+    image:
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Marketing Automation",
+    description:
+      "Nurture prospects with personalized campaigns and track engagement across multiple channels.",
+    image:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Customer Support",
+    description:
+      "Manage tickets, automate responses, and deliver a seamless support experience to your customers.",
+    image:
+      "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+// Dummy testimonials
+const testimonials = [
+  {
+    quote:
+      "SalesOps Pro has transformed the way our team works. Automations have saved us countless hours!",
+    name: "Alex Kim",
+    title: "Director of Sales",
+    company: "Acme Inc.",
+    image:
+      "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    quote:
+      "Our lead conversion rates have increased by 30% since we switched to this platform. Highly recommended.",
+    name: "Priya Sharma",
+    title: "VP Marketing",
+    company: "NextGen Solutions",
+    image:
+      "https://randomuser.me/api/portraits/women/65.jpg",
+  },
+];
+
+export default function Homepage({ navigateToView }) {
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className={`min-h-screen flex flex-col font-inter ${theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-      <header className="py-4 px-6 md:px-10 shadow-sm sticky top-0 z-40 bg-white dark:bg-gray-800/80 backdrop-blur-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center cursor-pointer" onClick={() => navigateToView('homepage')}>
-            <Briefcase size={28} className="text-blue-600 dark:text-blue-400" />
-            <h1 className="text-2xl font-bold ml-2.5 text-gray-800 dark:text-white">SalesOps Pro</h1>
+    <div className="font-sans bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+      {/* 1. Navigation Bar */}
+      <nav className="bg-white shadow-sm sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigateToView?.("homepage")}>
+            <Briefcase size={28} className="text-blue-600" />
+            <span className="text-xl font-bold tracking-tight">SalesOps Pro</span>
           </div>
-          <nav className="hidden md:flex items-center space-x-6">
-            <button onClick={() => navigateToView('features')} className="hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium">Features</button>
-            <button onClick={() => navigateToView('pricing')} className="hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium">Pricing</button>
-            <button onClick={() => navigateToView('about')} className="hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium">About</button>
-          </nav>
-          <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-6">
+            <button className="hover:text-blue-600 transition-colors">Products</button>
+            <button className="hover:text-blue-600 transition-colors">Solutions</button>
+            <button className="hover:text-blue-600 transition-colors">Pricing</button>
+            <button className="hover:text-blue-600 transition-colors">Resources</button>
+            <button className="hover:text-blue-600 transition-colors">Company</button>
+            <button className="hover:text-blue-600 transition-colors">Contact</button>
+          </div>
+          <div className="flex items-center space-x-3">
             <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Toggle theme"
+              className="flex items-center px-4 py-2 rounded text-blue-600 font-semibold hover:bg-blue-50 transition"
+              onClick={() => navigateToView?.("login")}
             >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              <LogIn size={18} className="mr-1" /> Login
             </button>
-            {isAuthenticated ? (
-              <button 
-                onClick={() => navigateToView('dashboard')}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
-              >
-                Dashboard
-              </button>
-            ) : (
-              <>
-                <button 
-                  onClick={() => navigateToView('login')}
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
-                >
-                  Login
-                </button>
-                <button 
-                  onClick={() => navigateToView('signup')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm"
-                >
-                  Sign Up Free
-                </button>
-              </>
-            )}
+            <button
+              className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition flex items-center"
+              onClick={() => navigateToView?.("signup")}
+            >
+              Free Trial <ChevronRight size={18} className="ml-1" />
+            </button>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="flex-grow">
-        <section className="py-20 md:py-32 text-center bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-700 dark:via-blue-600 dark:to-indigo-700 text-white">
-          <div className="container mx-auto px-6">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fadeInUp">
-              Elevate Your Sales Operations
-            </h2>
-            <p className="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto opacity-90 animate-fadeInUp animation-delay-300">
-              SalesOps Pro provides the tools you need to streamline processes, boost productivity, and drive revenue growth. All in one powerful, intuitive platform.
-            </p>
-            <button 
-              onClick={() => navigateToView(isAuthenticated ? 'dashboard' : 'signup')}
-              className="bg-white hover:bg-gray-100 text-blue-600 dark:text-blue-500 dark:hover:bg-gray-200 font-bold py-3 px-8 rounded-lg shadow-xl hover:shadow-2xl text-lg transition-all flex items-center justify-center mx-auto"
+      {/* 2. Hero Section */}
+      <section className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 pt-16 md:pt-24 pb-12 md:pb-20">
+        <div className="w-full md:w-1/2 space-y-6">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2">
+            Supercharge Your Sales <span className="text-blue-600">with Automation</span>
+          </h1>
+          <p className="text-lg text-gray-600 mb-6">
+            Streamline your sales, marketing, and support with one powerful platform. Close more deals and deliver exceptional customer experiences.
+          </p>
+          <div className="flex space-x-3">
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow transition flex items-center group"
+              onClick={() => navigateToView?.("signup")}
             >
-              {isAuthenticated ? 'Go to Dashboard' : `Start Your ${TRIAL_DURATION_DAYS}-Day Free Trial`} <ArrowRight size={20} className="ml-2" />
+              Get a Free Trial <ArrowRight size={19} className="ml-2 group-hover:translate-x-1 transition" />
+            </button>
+            <button
+              className="bg-white text-blue-700 border border-blue-600 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-50 transition flex items-center group"
+              onClick={() => navigateToView?.("contact")}
+            >
+              Book a Demo <ArrowUpRight size={18} className="ml-2 group-hover:-translate-y-1 transition" />
             </button>
           </div>
-        </section>
+        </div>
+        <div className="w-full md:w-1/2 flex items-center justify-center mb-8 md:mb-0">
+          <img
+            src="https://www.leadsquared.com/wp-content/uploads/2023/10/leadsquared-sales-execution-platform.png"
+            alt="CRM Dashboard Illustration"
+            className="w-full max-w-md rounded-2xl shadow-xl"
+          />
+        </div>
+      </section>
 
-        <section className="py-16 md:py-24 bg-white dark:bg-gray-800" id="features">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-12 md:mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">Powerful Features, Seamless Experience</h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Everything you need to supercharge your sales team and achieve your targets.
-              </p>
+      {/* 3. Trusted By Section */}
+      <section className="py-6 bg-white border-y border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col items-center">
+          <div className="text-gray-600 text-sm mb-4">Trusted by leading companies</div>
+          <div className="flex flex-wrap gap-6 justify-center items-center">
+            {logos.map((logo, i) => (
+              <img
+                src={logo}
+                alt={`Client ${i + 1}`}
+                key={i}
+                className="h-10 object-contain grayscale hover:grayscale-0 transition-all duration-200"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Feature Highlights Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">Everything You Need in One Platform</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Boost sales performance, automate repetitive tasks, and make smarter decisions.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col items-center text-center">
+              <Users className="text-blue-600 mb-3" size={32} />
+              <h3 className="font-semibold text-lg mb-2">Lead Management</h3>
+              <p className="text-gray-500 text-sm">Capture, nurture, and convert leads efficiently with smart automations.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-              {features.map((feature) => (
-                <div key={feature.name} className="bg-gray-50 dark:bg-gray-850 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2">
-                  <div className={`p-3 inline-block rounded-full bg-opacity-10 mb-4 ${feature.color.replace('text-', 'bg-')}`}>
-                    <feature.icon size={28} className={feature.color} />
+            <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col items-center text-center">
+              <Briefcase className="text-green-600 mb-3" size={32} />
+              <h3 className="font-semibold text-lg mb-2">Deal Tracking</h3>
+              <p className="text-gray-500 text-sm">Visualize your pipeline and forecast revenue with powerful deal tracking tools.</p>
+            </div>
+            <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col items-center text-center">
+              <Zap className="text-yellow-500 mb-3" size={32} />
+              <h3 className="font-semibold text-lg mb-2">Workflow Automation</h3>
+              <p className="text-gray-500 text-sm">Eliminate manual tasks and speed up your sales process with automation.</p>
+            </div>
+            <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col items-center text-center">
+              <ShieldCheck className="text-purple-600 mb-3" size={32} />
+              <h3 className="font-semibold text-lg mb-2">Secure & Scalable</h3>
+              <p className="text-gray-500 text-sm">Enterprise-grade security and scalability for fast-growing teams.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Use Case Carousel or Tabs */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">Designed For Every Team</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              See how SalesOps Pro empowers your business across departments.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {useCases.map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveTab(idx)}
+                className={`px-4 py-2 rounded-full font-medium transition border ${
+                  activeTab === idx
+                    ? "bg-blue-600 text-white border-blue-600 shadow"
+                    : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50"
+                }`}
+              >
+                {item.title}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-col md:flex-row items-center md:gap-12 gap-6 mt-6">
+            <div className="md:w-1/2 w-full">
+              <img
+                src={useCases[activeTab].image}
+                alt={useCases[activeTab].title}
+                className="rounded-2xl shadow-lg mx-auto"
+                loading="lazy"
+              />
+            </div>
+            <div className="md:w-1/2 w-full text-center md:text-left">
+              <h3 className="text-2xl font-bold mb-4">{useCases[activeTab].title}</h3>
+              <p className="text-gray-600 text-lg">{useCases[activeTab].description}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Testimonials Section */}
+      <section className="py-16 bg-blue-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">What Our Customers Say</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {testimonials.map((t, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition p-8 flex flex-col items-center text-center"
+              >
+                <Quote className="text-blue-400 mb-2" size={32} />
+                <p className="text-gray-700 text-lg mb-5 italic">"{t.quote}"</p>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
+                  />
+                  <div className="text-left">
+                    <div className="font-semibold">{t.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {t.title}, {t.company}
+                    </div>
                   </div>
-                  <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{feature.name}</h4>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.description}</p>
                 </div>
-              ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. CTA Banner */}
+      <section className="bg-blue-600 py-12">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-0">
+            Ready to drive more revenue and productivity?
+          </h2>
+          <button
+            className="bg-white text-blue-700 px-8 py-3 rounded-lg font-semibold shadow hover:bg-blue-50 transition flex items-center mt-2 md:mt-0"
+            onClick={() => navigateToView?.("signup")}
+          >
+            Start your free trial <ArrowRight size={19} className="ml-2" />
+          </button>
+        </div>
+      </section>
+
+      {/* 8. Footer */}
+      <footer className="bg-gray-900 text-gray-100 py-12 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-8">
+          <div>
+            <div className="flex items-center mb-2">
+              <Briefcase size={25} className="text-blue-500 mr-2" />
+              <span className="font-bold text-lg">SalesOps Pro</span>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">
+              The modern revenue platform for high-velocity teams.
+            </p>
+            <div className="flex space-x-3">
+              <a href="#" aria-label="Twitter" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195A4.916 4.916 0 0 0 16.616 3c-2.737 0-4.958 2.22-4.958 4.958 0 .388.045.765.127 1.124C7.728 8.874 4.1 6.9 1.67 3.882a4.822 4.822 0 0 0-.666 2.492c0 1.721.876 3.234 2.213 4.122a4.904 4.904 0 0 1-2.244-.618v.062c0 2.404 1.71 4.411 3.977 4.867a4.897 4.897 0 0 1-2.239.085c.63 1.966 2.444 3.393 4.6 3.434A9.868 9.868 0 0 1 0 21.542a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 14.307-14.426 0-.22-.005-.438-.015-.654A10.243 10.243 0 0 0 24 4.557z"/></svg></a>
+              <a href="#" aria-label="LinkedIn" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm14.5 11.268h-3v-5.604c0-1.337-.025-3.058-1.865-3.058-1.867 0-2.153 1.457-2.153 2.965v5.697h-3v-10h2.882v1.366h.041c.401-.76 1.381-1.561 2.842-1.561 3.041 0 3.602 2.002 3.602 4.604v5.591z"/></svg></a>
+              <a href="#" aria-label="Facebook" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M22.676 0h-21.352c-.732 0-1.324.594-1.324 1.326v21.348c0 .73.592 1.326 1.324 1.326h11.495v-9.284h-3.125v-3.622h3.125v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.461.098 2.797.142v3.24l-1.919.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12v9.284h6.116c.73 0 1.324-.596 1.324-1.326v-21.348c0-.732-.594-1.326-1.324-1.326z"/></svg></a>
             </div>
           </div>
-        </section>
-
-        <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900" id="pricing">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-12 md:mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">Simple, Transparent Pricing</h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Get started with a free trial. Upgrade, downgrade, or cancel anytime.
-              </p>
-            </div>
-            <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center">
-                <span className="text-lg font-semibold text-blue-600 mb-2">Starter</span>
-                <span className="text-3xl font-bold mb-2">$0</span>
-                <span className="text-gray-500 dark:text-gray-400 mb-4 text-sm">Free {TRIAL_DURATION_DAYS}-day trial</span>
-                <ul className="mb-6 text-gray-700 dark:text-gray-300 text-sm text-left space-y-2">
-                  <li>✓ All core modules</li>
-                  <li>✓ Email support</li>
-                  <li>✓ 1 user</li>
-                </ul>
-                <button onClick={() => navigateToView('signup')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">Start Free</button>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center border-2 border-blue-600 dark:border-blue-400 scale-105">
-                <span className="text-lg font-semibold text-blue-600 mb-2">Pro</span>
-                <span className="text-3xl font-bold mb-2">$29</span>
-                <span className="text-gray-500 dark:text-gray-400 mb-4 text-sm">per user / month</span>
-                <ul className="mb-6 text-gray-700 dark:text-gray-300 text-sm text-left space-y-2">
-                  <li>✓ Everything in Starter</li>
-                  <li>✓ Automation & analytics</li>
-                  <li>✓ Unlimited users</li>
-                  <li>✓ Priority support</li>
-                </ul>
-                <button onClick={() => navigateToView('signup')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">Try Pro</button>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center">
-                <span className="text-lg font-semibold text-blue-600 mb-2">Enterprise</span>
-                <span className="text-3xl font-bold mb-2">Custom</span>
-                <span className="text-gray-500 dark:text-gray-400 mb-4 text-sm">Contact us</span>
-                <ul className="mb-6 text-gray-700 dark:text-gray-300 text-sm text-left space-y-2">
-                  <li>✓ All Pro features</li>
-                  <li>✓ Custom integrations</li>
-                  <li>✓ Dedicated support</li>
-                </ul>
-                <button onClick={() => navigateToView('contact')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">Contact Sales</button>
-              </div>
-            </div>
+          <div>
+            <div className="font-semibold mb-3">Products</div>
+            <ul className="space-y-1 text-gray-400 text-sm">
+              <li><a href="#" className="hover:text-blue-300 transition">Sales CRM</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Marketing Automation</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Lead Management</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Reporting</a></li>
+            </ul>
           </div>
-        </section>
-
-        <section className="py-16 md:py-24 bg-white dark:bg-gray-800" id="testimonials">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-12 md:mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">What Our Customers Say</h3>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {testimonials.map(t => (
-                <div key={t.name} className="bg-gray-50 dark:bg-gray-850 p-6 rounded-xl shadow-lg flex flex-col items-center text-center">
-                  <t.icon className="text-yellow-400 mb-2" size={32} />
-                  <p className="text-gray-700 dark:text-gray-200 text-lg mb-4">“{t.feedback}”</p>
-                  <div className="font-medium text-blue-600">{t.name}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">{t.company}</div>
-                </div>
-              ))}
-            </div>
+          <div>
+            <div className="font-semibold mb-3">Solutions</div>
+            <ul className="space-y-1 text-gray-400 text-sm">
+              <li><a href="#" className="hover:text-blue-300 transition">Field Sales</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Inside Sales</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Support Automation</a></li>
+            </ul>
           </div>
-        </section>
-      </main>
-
-      <footer className="py-8 text-center bg-gray-100 dark:bg-gray-850 border-t dark:border-gray-700">
-        <div className="container mx-auto px-6">
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} SalesOps Pro. All rights reserved.
-          </p>
+          <div>
+            <div className="font-semibold mb-3">Company</div>
+            <ul className="space-y-1 text-gray-400 text-sm">
+              <li><a href="#" className="hover:text-blue-300 transition">About</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Careers</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Press</a></li>
+            </ul>
+          </div>
+          <div>
+            <div className="font-semibold mb-3">Contact</div>
+            <ul className="space-y-1 text-gray-400 text-sm">
+              <li><a href="#" className="hover:text-blue-300 transition">Help Center</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Support</a></li>
+              <li><a href="#" className="hover:text-blue-300 transition">Request a Demo</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 mt-8 text-gray-400 text-xs text-center border-t border-gray-800 pt-6">
+          © {new Date().getFullYear()} SalesOps Pro. All rights reserved.
         </div>
       </footer>
-      <style jsx global>{` 
-        .animation-delay-300 { animation-delay: 0.3s; }
-        .animation-delay-600 { animation-delay: 0.6s; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInUp { 
-            animation-name: fadeInUp;
-            animation-duration: 0.7s;
-            animation-fill-mode: both;
-        }
-        .dark .bg-gray-850 { background-color: #161d2a; }
-      `}</style>
     </div>
   );
-};
-
-export default Homepage;
+}
