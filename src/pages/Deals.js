@@ -1,3 +1,10 @@
+import NavigationBar from '../components/NavigationBar';
+
+// Inside your component's return:
+<NavigationBar
+  onBack={() => navigateToView('dashboard')}
+  goToDashboard={() => navigateToView('dashboard')}
+/>
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   collection, query, onSnapshot, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, Timestamp, where, getCountFromServer, getDocs, limit,
