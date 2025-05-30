@@ -119,7 +119,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -131,7 +131,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -143,7 +143,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -155,7 +155,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -167,7 +167,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -179,7 +179,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -191,7 +191,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
           />
         );
@@ -203,7 +203,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
             theme={theme}
             setTheme={setTheme}
@@ -218,7 +218,7 @@ function App() {
             setError={setAppError}
             setSuccess={setAppSuccess}
             db={db}
-            currentAppId={authUser ? authUser.uid : null}
+            currentAppId={appIdString}
             navigateToView={setCurrentView}
             theme={theme}
             setTheme={setTheme}
