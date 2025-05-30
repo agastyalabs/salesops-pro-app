@@ -43,9 +43,12 @@ function App() {
       setCurrentUserId(user ? user.uid : null);
       setIsAuthReady(true);
 
+      // On logout or no user, reset profile and show homepage (not login)
       if (!user) {
         setCurrentUserProfile(null);
-        setCurrentView('homepage'); // <-- Show homepage for unauthenticated users!
+        // Don't force currentView here; let user navigation pick signup/login/homepage
+        // If you want to force homepage always, uncomment below:
+        // setCurrentView('homepage');
       }
     });
     return () => unsubscribe();
@@ -72,7 +75,7 @@ function App() {
     setIsLoading(true);
     try {
       await signOut(auth);
-      setCurrentView('homepage'); // After sign out, show homepage
+      setCurrentView('homepage'); // Show homepage after logout
       setCurrentUserProfile(null);
       setAppSuccess('Logged out successfully.');
     } catch (error) {
@@ -87,6 +90,7 @@ function App() {
     if (!isAuthReady) return <LoadingSpinner text="Loading..." />;
     if (isLoading) return <LoadingSpinner text="Loading..." />;
 
+    // UNAUTHENTICATED: Show correct landing view
     if (!authUser) {
       if (currentView === 'signup') {
         return (
@@ -98,7 +102,17 @@ function App() {
           />
         );
       }
-      // Default for unauthenticated: homepage
+      if (currentView === 'login') {
+        return (
+          <LoginPage
+            setCurrentViewFunction={setCurrentView}
+            setError={setAppError}
+            setSuccess={setAppSuccess}
+            theme={theme}
+          />
+        );
+      }
+      // Default: show homepage with navigation options
       return (
         <Homepage
           setError={setAppError}
@@ -115,7 +129,7 @@ function App() {
       );
     }
 
-    // Authenticated views
+    // AUTHENTICATED
     switch (currentView) {
       case 'dashboard':
         return (
