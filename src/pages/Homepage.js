@@ -5,10 +5,8 @@ import {
   Users,
   Briefcase,
   Zap,
-  Headset,
   ShieldCheck,
   ArrowRight,
-  ArrowUpRight,
   Quote,
 } from "lucide-react";
 
@@ -82,31 +80,32 @@ export default function Homepage({ navigateToView }) {
 
   return (
     <div className="font-sans bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-      {/* 1. Navigation Bar */}
+      {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
+          <button
+            className="flex items-center space-x-2 cursor-pointer bg-transparent border-none outline-none"
             onClick={() => scrollToSection("hero")}
+            aria-label="Go to homepage"
           >
             <Briefcase size={28} className="text-blue-600" />
             <span className="text-xl font-bold tracking-tight">SalesOps Pro</span>
-          </div>
+          </button>
           <div className="hidden md:flex items-center space-x-6">
             <button
-              className="hover:text-blue-600 transition-colors"
+              className="hover:text-blue-600 transition-colors bg-transparent border-none outline-none"
               onClick={() => scrollToSection("features")}
             >
               Features
             </button>
             <button
-              className="hover:text-blue-600 transition-colors"
+              className="hover:text-blue-600 transition-colors bg-transparent border-none outline-none"
               onClick={() => scrollToSection("pricing")}
             >
               Pricing
             </button>
             <button
-              className="hover:text-blue-600 transition-colors"
+              className="hover:text-blue-600 transition-colors bg-transparent border-none outline-none"
               onClick={() => scrollToSection("about")}
             >
               About
@@ -114,7 +113,7 @@ export default function Homepage({ navigateToView }) {
           </div>
           <div className="flex items-center space-x-3">
             <button
-              className="flex items-center px-4 py-2 rounded text-blue-600 font-semibold hover:bg-blue-50 transition"
+              className="flex items-center px-4 py-2 rounded text-blue-600 font-semibold hover:bg-blue-50 transition bg-transparent border-none outline-none"
               onClick={() => navigateToView?.("login")}
             >
               <LogIn size={18} className="mr-1" /> Login
@@ -129,18 +128,18 @@ export default function Homepage({ navigateToView }) {
         </div>
       </nav>
 
-      {/* 2. Hero Section */}
+      {/* Hero Section */}
       <section id="hero" className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 pt-16 md:pt-24 pb-12 md:pb-20">
         <div className="w-full md:w-1/2 space-y-6">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2">
             Elevate Your <span className="text-blue-600">Sales Operations</span>
           </h1>
-          <p className="text-lg text-gray-100 mb-6">
+          <p className="text-lg text-gray-700 mb-6">
             SalesOps Pro provides the tools you need to streamline processes, boost productivity, and drive revenue growth. All in one powerful, intuitive platform.
           </p>
           <div className="flex space-x-3">
             <button
-              className="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-50 transition flex items-center"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow transition flex items-center"
               onClick={() => navigateToView?.("signup")}
             >
               Start Your 14-Day Free Trial <ArrowRight size={19} className="ml-2" />
@@ -156,7 +155,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 3. Trusted By Section */}
+      {/* Trusted By Section */}
       <section className="py-6 bg-white border-y border-gray-200">
         <div className="max-w-6xl mx-auto px-4 flex flex-col items-center">
           <div className="text-gray-600 text-sm mb-4">Trusted by leading companies</div>
@@ -174,7 +173,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 4. Feature Highlights Section */}
+      {/* Feature Highlights Section */}
       <section id="features" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -208,7 +207,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 5. Use Case Carousel or Tabs */}
+      {/* Use Case Carousel or Tabs */}
       <section id="pricing" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-10">
@@ -249,7 +248,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 6. Testimonials Section */}
+      {/* Testimonials Section */}
       <section id="about" className="py-16 bg-blue-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -282,7 +281,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 7. CTA Banner */}
+      {/* CTA Banner */}
       <section className="bg-blue-600 py-12">
         <div className="max-w-4xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-0">
@@ -297,7 +296,7 @@ export default function Homepage({ navigateToView }) {
         </div>
       </section>
 
-      {/* 8. Footer */}
+      {/* Footer */}
       <footer className="bg-gray-900 text-gray-100 py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-5 gap-8">
           <div>
@@ -309,42 +308,48 @@ export default function Homepage({ navigateToView }) {
               The modern revenue platform for high-velocity teams.
             </p>
             <div className="flex space-x-3">
-              <a href="#" aria-label="Twitter" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195A4.916 4.916 0 0 0 16.616 3c-2.737 0-4.958 2.22-4.958 4.958 0 .388.045.765.127 1.124C7.728 8.874 4.1 6.9 1.67 3.882a4.822 4.822 0 0 0-.666 2.492c0 1.721.876 3.234 2.213 4.122a4.904 4.904 0 0 1-2.244-.618v.062c0 2.404 1.71 4.411 3.977 4.867a4.897 4.897 0 0 1-2.239.085c.63 1.966 2.444 3.393 4.6 3.434A9.868 9.868 0 0 1 0 21.542a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 14.307-14.426 0-.22-.005-.438-.015-.654A10.243 10.243 0 0 0 24 4.557z"/></svg></a>
-              <a href="#" aria-label="LinkedIn" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm14.5 11.268h-3v-5.604c0-1.337-.025-3.058-1.865-3.058-1.867 0-2.153 1.457-2.153 2.965v5.697h-3v-10h2.882v1.366h.041c.401-.76 1.381-1.561 2.842-1.561 3.041 0 3.602 2.002 3.602 4.604v5.591z"/></svg></a>
-              <a href="#" aria-label="Facebook" className="hover:text-blue-400 transition"><svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M22.676 0h-21.352c-.732 0-1.324.594-1.324 1.326v21.348c0 .73.592 1.326 1.324 1.326h11.495v-9.284h-3.125v-3.622h3.125v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.461.098 2.797.142v3.24l-1.919.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12v9.284h6.116c.73 0 1.324-.596 1.324-1.326v-21.348c0-.732-.594-1.326-1.324-1.326z"/></svg></a>
+              <a href="https://twitter.com/" aria-label="Twitter" className="hover:text-blue-400 transition" target="_blank" rel="noopener noreferrer">
+                <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195A4.916 4.916 0 0 0 16.616 3c-2.737 0-4.958 2.22-4.958 4.958 0 .388.045.765.127 1.124C7.728 8.874 4.1 6.9 1.67 3.882a4.822 4.822 0 0 0-.666 2.492c0 1.721.876 3.234 2.213 4.122a4.904 4.904 0 0 1-2.244-.618v.062c0 2.404 1.71 4.411 3.977 4.867a4.897 4.897 0 0 1-2.239.085c.63 1.966 2.444 3.393 4.6 3.434A9.868 9.868 0 0 1 0 21.542a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 14.307-14.426 0-.22-.005-.438-.015-.654A10.243 10.243 0 0 0 24 4.557z"/></svg>
+              </a>
+              <a href="https://linkedin.com/" aria-label="LinkedIn" className="hover:text-blue-400 transition" target="_blank" rel="noopener noreferrer">
+                <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm14.5 11.268h-3v-5.604c0-1.337-.025-3.058-1.865-3.058-1.867 0-2.153 1.457-2.153 2.965v5.697h-3v-10h2.882v1.366h.041c.401-.76 1.381-1.561 2.842-1.561 3.041 0 3.602 2.002 3.602 4.604v5.591z"/></svg>
+              </a>
+              <a href="https://facebook.com/" aria-label="Facebook" className="hover:text-blue-400 transition" target="_blank" rel="noopener noreferrer">
+                <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M22.676 0h-21.352c-.732 0-1.324.594-1.324 1.326v21.348c0 .73.592 1.326 1.324 1.326h11.495v-9.284h-3.125v-3.622h3.125v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.461.098 2.797.142v3.24l-1.919.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12v9.284h6.116c.73 0 1.324-.596 1.324-1.326v-21.348c0-.732-.594-1.326-1.324-1.326z"/></svg>
+              </a>
             </div>
           </div>
           <div>
             <div className="font-semibold mb-3">Products</div>
             <ul className="space-y-1 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-blue-300 transition">Sales CRM</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Marketing Automation</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Lead Management</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Reporting</a></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Sales CRM</span></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Marketing Automation</span></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Lead Management</span></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Reporting</span></li>
             </ul>
           </div>
           <div>
             <div className="font-semibold mb-3">Solutions</div>
             <ul className="space-y-1 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-blue-300 transition">Field Sales</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Inside Sales</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Support Automation</a></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Field Sales</span></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Inside Sales</span></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('features')}>Support Automation</span></li>
             </ul>
           </div>
           <div>
             <div className="font-semibold mb-3">Company</div>
             <ul className="space-y-1 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-blue-300 transition">About</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Careers</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Press</a></li>
+              <li><span className="cursor-pointer hover:text-blue-300 transition" onClick={() => scrollToSection('about')}>About</span></li>
+              <li><a href="https://yourcompany.com/careers" className="hover:text-blue-300 transition" target="_blank" rel="noopener noreferrer">Careers</a></li>
+              <li><a href="https://yourcompany.com/press" className="hover:text-blue-300 transition" target="_blank" rel="noopener noreferrer">Press</a></li>
             </ul>
           </div>
           <div>
             <div className="font-semibold mb-3">Contact</div>
             <ul className="space-y-1 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-blue-300 transition">Help Center</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Support</a></li>
-              <li><a href="#" className="hover:text-blue-300 transition">Request a Demo</a></li>
+              <li><a href="mailto:support@yourcompany.com" className="hover:text-blue-300 transition">Help Center</a></li>
+              <li><a href="mailto:support@yourcompany.com" className="hover:text-blue-300 transition">Support</a></li>
+              <li><button className="hover:text-blue-300 transition bg-transparent border-none outline-none p-0" onClick={() => navigateToView?.("signup")}>Request a Demo</button></li>
             </ul>
           </div>
         </div>
