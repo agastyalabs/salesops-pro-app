@@ -52,7 +52,6 @@ import AIInsightsPanel from '../components/AIInsightsPanel';
 import AISmartSearch from '../components/AISmartSearch';
 import AISummaryWidget from '../components/AISummaryWidget';
 
-// You need to implement these Gemini API calls
 import {
   fetchGeminiAIInsights,
   fetchGeminiSearch,
@@ -69,15 +68,49 @@ const Dashboard = ({
   navigateToView,
   theme,
 }) => {
-  // ... all previous state and effect logic, unchanged ...
+  // Example dashboard data state and loading
+  const [dashboardData, setDashboardData] = useState({
+    leads: 0,
+    deals: 0,
+    activities: 0,
+    contacts: 0,
+    // ...add more as needed
+  });
+  const [loading, setLoading] = useState(true);
 
-  // --- Your data fetching (unchanged from earlier enhanced code) ---
-  // ... [SNIP: use the previously enhanced version for all state/effect logic] ...
+  // Fetch dashboard stats (adapt this to your real data model)
+  useEffect(() => {
+    if (!db || !userId) return;
+    setLoading(true);
 
-  // Insert all the code from your last improved Dashboard.js here up to the return statement,
-  // then add the AI widgets below just after the Alerts and before the rest of the dashboard
+    const fetchStats = async () => {
+      try {
+        // Example: count leads, deals, activities, contacts for the user
+        const leadsSnap = await getDocs(query(collection(db, 'leads'), limit(1)));
+        const dealsSnap = await getDocs(query(collection(db, 'deals'), limit(1)));
+        const activitiesSnap = await getDocs(query(collection(db, 'activities'), limit(1)));
+        const contactsSnap = await getDocs(query(collection(db, 'contacts'), limit(1)));
+        setDashboardData({
+          leads: leadsSnap.size,
+          deals: dealsSnap.size,
+          activities: activitiesSnap.size,
+          contacts: contactsSnap.size,
+        });
+      } catch (err) {
+        setError('Failed to load dashboard data.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // --- Main render ---
+    fetchStats();
+  }, [db, userId, setError]);
+
+  // Main render
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="animate-fadeIn">
       {/* --- AI Features --- */}
@@ -93,8 +126,30 @@ const Dashboard = ({
         fetchGeminiSummary={fetchGeminiSummary}
       />
 
-      {/* ...The rest of your Dashboard page remains the same... */}
-      {/* [Insert the rest of the dashboard code as previously enhanced] */}
+      {/* --- Example Dashboard widgets (replace with your real UI) --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 my-6">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-5 flex flex-col items-center">
+          <Users className="text-blue-500 mb-2" size={28} />
+          <div className="text-2xl font-bold">{dashboardData.leads}</div>
+          <div className="text-gray-600 dark:text-gray-300">Leads</div>
+        </div>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-5 flex flex-col items-center">
+          <Briefcase className="text-green-500 mb-2" size={28} />
+          <div className="text-2xl font-bold">{dashboardData.deals}</div>
+          <div className="text-gray-600 dark:text-gray-300">Deals</div>
+        </div>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-5 flex flex-col items-center">
+          <ActivityIcon className="text-orange-500 mb-2" size={28} />
+          <div className="text-2xl font-bold">{dashboardData.activities}</div>
+          <div className="text-gray-600 dark:text-gray-300">Activities</div>
+        </div>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-5 flex flex-col items-center">
+          <UserCheck className="text-purple-500 mb-2" size={28} />
+          <div className="text-2xl font-bold">{dashboardData.contacts}</div>
+          <div className="text-gray-600 dark:text-gray-300">Contacts</div>
+        </div>
+      </div>
+      {/* Add more dashboard content/charts as needed */}
     </div>
   );
 };
