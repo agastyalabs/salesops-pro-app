@@ -1,3 +1,10 @@
+import NavigationBar from '../components/NavigationBar';
+
+// Inside your component's return:
+<NavigationBar
+  onBack={() => navigateToView('dashboard')}
+  goToDashboard={() => navigateToView('dashboard')}
+/>
 import React, { useState } from 'react';
 import { AtSign, KeyRound } from 'lucide-react';
 import AuthPageLayout from './AuthPageLayout';
