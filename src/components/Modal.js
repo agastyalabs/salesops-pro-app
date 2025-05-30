@@ -1,4 +1,3 @@
-// src/components/Modal.js
 import React from 'react';
 import { XCircle } from 'lucide-react';
 
@@ -21,11 +20,11 @@ const Modal = ({ isOpen, onClose, title, children, size = "lg" }) => {
     };
 
     return (
-        <div 
+        <div
             className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out animate-fadeIn"
             onClick={onClose} // Close when clicking on the overlay
         >
-            <div 
+            <div
                 className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl w-full ${sizeClasses[size]} transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-modalShow max-h-[90vh] flex flex-col`}
                 onClick={handleModalContentClick} // Stop propagation for clicks inside the modal
             >
@@ -42,14 +41,14 @@ const Modal = ({ isOpen, onClose, title, children, size = "lg" }) => {
                 <div className="overflow-y-auto flex-grow pr-1 custom-scrollbar">{children}</div>
             </div>
             {/* Animation styles should be in a global CSS file or defined with a CSS-in-JS solution if not using Tailwind JIT features for animation classes directly */}
-            <style jsx global>{` 
+            <style jsx="true" global="true">{`
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-                @keyframes modalShow { 
+                @keyframes modalShow {
                     0% { opacity: 0; transform: scale(0.95) translateY(-10px); }
-                    100% { opacity: 1; transform: scale(1) translateY(0); } 
-                } 
-                .animate-modalShow { 
+                    100% { opacity: 1; transform: scale(1) translateY(0); }
+                }
+                .animate-modalShow {
                     animation: modalShow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
                 }
             `}</style>
