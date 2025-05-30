@@ -69,6 +69,14 @@ const testimonials = [
   },
 ];
 
+// Smooth scroll for in-page navigation
+const scrollToSection = (id) => {
+  const section = document.getElementById(id);
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
 export default function Homepage({ navigateToView }) {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -77,17 +85,32 @@ export default function Homepage({ navigateToView }) {
       {/* 1. Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigateToView?.("homepage")}>
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => scrollToSection("hero")}
+          >
             <Briefcase size={28} className="text-blue-600" />
             <span className="text-xl font-bold tracking-tight">SalesOps Pro</span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <button className="hover:text-blue-600 transition-colors">Products</button>
-            <button className="hover:text-blue-600 transition-colors">Solutions</button>
-            <button className="hover:text-blue-600 transition-colors">Pricing</button>
-            <button className="hover:text-blue-600 transition-colors">Resources</button>
-            <button className="hover:text-blue-600 transition-colors">Company</button>
-            <button className="hover:text-blue-600 transition-colors">Contact</button>
+            <button
+              className="hover:text-blue-600 transition-colors"
+              onClick={() => scrollToSection("features")}
+            >
+              Features
+            </button>
+            <button
+              className="hover:text-blue-600 transition-colors"
+              onClick={() => scrollToSection("pricing")}
+            >
+              Pricing
+            </button>
+            <button
+              className="hover:text-blue-600 transition-colors"
+              onClick={() => scrollToSection("about")}
+            >
+              About
+            </button>
           </div>
           <div className="flex items-center space-x-3">
             <button
@@ -100,33 +123,27 @@ export default function Homepage({ navigateToView }) {
               className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition flex items-center"
               onClick={() => navigateToView?.("signup")}
             >
-              Free Trial <ChevronRight size={18} className="ml-1" />
+              Sign Up Free <ChevronRight size={18} className="ml-1" />
             </button>
           </div>
         </div>
       </nav>
 
       {/* 2. Hero Section */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 pt-16 md:pt-24 pb-12 md:pb-20">
+      <section id="hero" className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-8 pt-16 md:pt-24 pb-12 md:pb-20">
         <div className="w-full md:w-1/2 space-y-6">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-2">
-            Supercharge Your Sales <span className="text-blue-600">with Automation</span>
+            Elevate Your <span className="text-blue-600">Sales Operations</span>
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
-            Streamline your sales, marketing, and support with one powerful platform. Close more deals and deliver exceptional customer experiences.
+          <p className="text-lg text-gray-100 mb-6">
+            SalesOps Pro provides the tools you need to streamline processes, boost productivity, and drive revenue growth. All in one powerful, intuitive platform.
           </p>
           <div className="flex space-x-3">
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow transition flex items-center group"
+              className="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-50 transition flex items-center"
               onClick={() => navigateToView?.("signup")}
             >
-              Get a Free Trial <ArrowRight size={19} className="ml-2 group-hover:translate-x-1 transition" />
-            </button>
-            <button
-              className="bg-white text-blue-700 border border-blue-600 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-50 transition flex items-center group"
-              onClick={() => navigateToView?.("contact")}
-            >
-              Book a Demo <ArrowUpRight size={18} className="ml-2 group-hover:-translate-y-1 transition" />
+              Start Your 14-Day Free Trial <ArrowRight size={19} className="ml-2" />
             </button>
           </div>
         </div>
@@ -158,7 +175,7 @@ export default function Homepage({ navigateToView }) {
       </section>
 
       {/* 4. Feature Highlights Section */}
-      <section className="py-16 bg-gray-50">
+      <section id="features" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Everything You Need in One Platform</h2>
@@ -192,7 +209,7 @@ export default function Homepage({ navigateToView }) {
       </section>
 
       {/* 5. Use Case Carousel or Tabs */}
-      <section className="py-16 bg-white">
+      <section id="pricing" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Designed For Every Team</h2>
@@ -233,7 +250,7 @@ export default function Homepage({ navigateToView }) {
       </section>
 
       {/* 6. Testimonials Section */}
-      <section className="py-16 bg-blue-50">
+      <section id="about" className="py-16 bg-blue-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">What Our Customers Say</h2>
