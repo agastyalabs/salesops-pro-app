@@ -7,7 +7,7 @@ import {
   orderBy,
   limit,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
 } from 'firebase/firestore';
 import {
   Users,
@@ -22,7 +22,7 @@ import {
   BarChart3,
   ActivityIcon,
   PieChart as LucidePieChart,
-  ListChecks
+  ListChecks,
 } from 'lucide-react';
 import {
   PieChart,
@@ -35,7 +35,7 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
-  Cell
+  Cell,
 } from 'recharts';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { CHART_COLORS } from '../config';
@@ -48,7 +48,7 @@ const Dashboard = ({
   setSuccess,
   currentAppId,
   navigateToView,
-  theme
+  theme,
 }) => {
   const [dashboardData, setDashboardData] = useState({
     totalLeads: 0,
@@ -60,19 +60,19 @@ const Dashboard = ({
     leadStatusData: [],
     dealStageData: [],
     activityTypeData: [],
-    activityStatusData: []
+    activityStatusData: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [punchStatus, setPunchStatus] = useState({
     status: 'out',
     lastPunchTime: null,
-    isLoading: true
+    isLoading: true,
   });
 
+  // Get current geolocation
   const getCurrentLocation = useCallback(() => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
-        console.warn('Geolocation is not supported by your browser.');
         resolve(null);
         return;
       }
@@ -80,17 +80,17 @@ const Dashboard = ({
         (position) => {
           resolve({
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           });
         },
-        (error) => {
-          console.warn('Error getting location for punch:', error.message);
+        () => {
           resolve(null);
         }
       );
     });
   }, []);
 
+  // Punch status (In/Out)
   useEffect(() => {
     if (!userId || !db) {
       setPunchStatus((prev) => ({ ...prev, isLoading: false }));
@@ -108,21 +108,18 @@ const Dashboard = ({
           const lastPunch = snapshot.docs[0].data();
           setPunchStatus({
             status: lastPunch.type === 'punch-in' ? 'in' : 'out',
-            lastPunchTime: lastPunch.timestamp
-              ? lastPunch.timestamp.toDate()
-              : null,
-            isLoading: false
+            lastPunchTime: lastPunch.timestamp ? lastPunch.timestamp.toDate() : null,
+            isLoading: false,
           });
         } else {
           setPunchStatus({
             status: 'out',
             lastPunchTime: null,
-            isLoading: false
+            isLoading: false,
           });
         }
       },
-      (err) => {
-        console.error('Error fetching punch status:', err);
+      () => {
         setError('Could not fetch punch status.');
         setPunchStatus((prev) => ({ ...prev, isLoading: false }));
       }
@@ -130,6 +127,7 @@ const Dashboard = ({
     return () => unsubscribe();
   }, [userId, db, currentAppId, setError]);
 
+  // Dashboard data (leads, deals, contacts, activities)
   useEffect(() => {
     if (!userId || !db) {
       setIsLoading(false);
@@ -142,92 +140,81 @@ const Dashboard = ({
     const contactsPath = `artifacts/${currentAppId}/users/${userId}/contacts`;
     const activitiesPath = `artifacts/${currentAppId}/users/${userId}/activities`;
 
-    const unsubLeadsCount = onSnapshot(
-      collection(db, leadsPath),
-      (snapshot) => {
-        setDashboardData((prev) => ({
-          ...prev,
-          totalLeads: snapshot.size
-        }));
-      },
-      (err) => {
-        console.error('Leads count error:', err);
-      }
-    );
+    const unsubLeadsCount = onSnapshot(collection(db, leadsPath), (snapshot) => {
+      setDashboardData((prev) => ({
+        ...prev,
+        totalLeads: snapshot.size,
+      }));
+    });
 
-    const unsubContactsCount = onSnapshot(
-      collection(db, contactsPath),
-      (snapshot) => {
-        setDashboardData((prev) => ({
-          ...prev,
-          totalContacts: snapshot.size
-        }));
-      },
-      (err) => {
-        console.error('Contacts count error:', err);
-      }
-    );
+    const unsubContactsCount = onSnapshot(collection(db, contactsPath), (snapshot) => {
+      setDashboardData((prev) => ({
+        ...prev,
+        totalContacts: snapshot.size,
+      }));
+    });
 
     const fetchAggregates = async () => {
       try {
-        const [dealsSnapshot, activitiesSnapshot, leadsFullSnapshot] =
-          await Promise.all([
-            getDocs(collection(db, dealsPath)),
-            getDocs(collection(db, activitiesPath)),
-            getDocs(collection(db, leadsPath))
-          ]);
+        const [dealsSnapshot, activitiesSnapshot, leadsFullSnapshot] = await Promise.all([
+          getDocs(collection(db, dealsPath)),
+          getDocs(collection(db, activitiesPath)),
+          getDocs(collection(db, leadsPath)),
+        ]);
         const deals = dealsSnapshot.docs.map((d) => d.data());
         const activities = activitiesSnapshot.docs.map((d) => d.data());
         const leads = leadsFullSnapshot.docs.map((d) => d.data());
 
+        // Lead Status Pie
         const leadStatusCounts = leads.reduce((acc, lead) => {
-          acc[lead.status || 'Unknown'] =
-            (acc[lead.status || 'Unknown'] || 0) + 1;
+          acc[lead.status || 'Unknown'] = (acc[lead.status || 'Unknown'] || 0) + 1;
           return acc;
         }, {});
-        const leadStatusData = Object.entries(leadStatusCounts).map(
-          ([name, value]) => ({ name, value })
-        );
+        const leadStatusData = Object.entries(leadStatusCounts).map(([name, value]) => ({
+          name,
+          value,
+        }));
 
+        // Deals
         let openDealsValue = 0;
         const dealStageCounts = deals.reduce((acc, deal) => {
-          acc[deal.stage || 'Unknown'] =
-            (acc[deal.stage || 'Unknown'] || 0) + 1;
+          acc[deal.stage || 'Unknown'] = (acc[deal.stage || 'Unknown'] || 0) + 1;
           if (!['Closed Won', 'Closed Lost'].includes(deal.stage)) {
             openDealsValue += typeof deal.value === 'number' ? deal.value : 0;
           }
           return acc;
         }, {});
-        const dealStageData = Object.entries(dealStageCounts).map(
-          ([name, value]) => ({ name, value })
-        );
+        const dealStageData = Object.entries(dealStageCounts).map(([name, value]) => ({
+          name,
+          value,
+        }));
         const openDealsCount = deals.filter(
           (d) => !['Closed Won', 'Closed Lost'].includes(d.stage)
         ).length;
 
+        // Activities
         const activityTypeCounts = activities.reduce((acc, act) => {
-          acc[act.type || 'Unknown'] =
-            (acc[act.type || 'Unknown'] || 0) + 1;
+          acc[act.type || 'Unknown'] = (acc[act.type || 'Unknown'] || 0) + 1;
           return acc;
         }, {});
-        const activityTypeData = Object.entries(activityTypeCounts).map(
-          ([name, value]) => ({ name, value })
-        );
+        const activityTypeData = Object.entries(activityTypeCounts).map(([name, value]) => ({
+          name,
+          value,
+        }));
 
         const activityStatusCounts = activities.reduce((acc, act) => {
-          acc[act.status || 'Unknown'] =
-            (acc[act.status || 'Unknown'] || 0) + 1;
+          acc[act.status || 'Unknown'] = (acc[act.status || 'Unknown'] || 0) + 1;
           return acc;
         }, {});
-        const activityStatusData = Object.entries(activityStatusCounts).map(
-          ([name, value]) => ({ name, value })
-        );
+        const activityStatusData = Object.entries(activityStatusCounts).map(([name, value]) => ({
+          name,
+          value,
+        }));
 
         const activeTasks = activities.filter(
-          (a) =>
-            a.type === 'Task' &&
-            ['Open', 'In Progress'].includes(a.status)
+          (a) => a.type === 'Task' && ['Open', 'In Progress'].includes(a.status)
         ).length;
+
         const today = new Date();
         const todayStart = new Date(today.setHours(0, 0, 0, 0));
         const nextWeekEnd = new Date(todayStart);
@@ -250,10 +237,9 @@ const Dashboard = ({
           leadStatusData,
           dealStageData,
           activityTypeData,
-          activityStatusData
+          activityStatusData,
         }));
       } catch (err) {
-        console.error('Error fetching dashboard aggregates:', err);
         setError('Failed to load dashboard data.');
       } finally {
         setIsLoading(false);
@@ -268,6 +254,7 @@ const Dashboard = ({
     };
   }, [userId, db, currentAppId, setError]);
 
+  // Handle punch in/out
   const handlePunch = async (type) => {
     if (!userId || !db) {
       setError('User not authenticated or database unavailable.');
@@ -283,10 +270,10 @@ const Dashboard = ({
         `artifacts/${currentAppId}/users/${userId}/attendanceLog`
       );
       const newPunch = {
-        type: type,
+        type,
         timestamp: serverTimestamp(),
         timezoneOffset: new Date().getTimezoneOffset(),
-        location: location
+        location,
       };
       await addDoc(attendanceLogRef, newPunch);
       setSuccess(
@@ -295,16 +282,13 @@ const Dashboard = ({
         }! ${location ? 'Location captured.' : 'Location not captured.'}`
       );
     } catch (error) {
-      console.error(`Error during punch-${type}:`, error);
       setError(
-        `Failed to Punch ${
-          type === 'punch-in' ? 'In' : 'Out'
-        }: ${error.message}`
+        `Failed to Punch ${type === 'punch-in' ? 'In' : 'Out'}: ${error.message}`
       );
     }
   };
 
-  // StatCard supports click
+  // Stat card component
   const StatCard = ({
     title,
     value,
@@ -312,7 +296,7 @@ const Dashboard = ({
     color,
     description,
     isLoadingCard,
-    onClick
+    onClick,
   }) => {
     const colors = {
       blue: 'bg-blue-500 dark:bg-blue-600',
@@ -321,7 +305,7 @@ const Dashboard = ({
       purple: 'bg-purple-500 dark:bg-purple-600',
       teal: 'bg-teal-500 dark:bg-teal-600',
       pink: 'bg-pink-500 dark:bg-pink-600',
-      indigo: 'bg-indigo-500 dark:bg-indigo-600'
+      indigo: 'bg-indigo-500 dark:bg-indigo-600',
     };
     return (
       <div
@@ -330,6 +314,7 @@ const Dashboard = ({
         tabIndex={0}
         role="button"
         aria-pressed="false"
+        onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onClick && onClick()}
       >
         <div className="flex items-center justify-between">
           <div>
@@ -349,7 +334,7 @@ const Dashboard = ({
 
   if (!userProfile) return <LoadingSpinner text="Loading dashboard..." />;
 
-  // Each stat card now has an onClick handler for navigation
+  // Stat cards
   const displayStats = [
     {
       title: 'Total Leads',
@@ -357,7 +342,7 @@ const Dashboard = ({
       icon: Users,
       color: 'blue',
       description: 'All leads in your pipeline.',
-      onClick: () => navigateToView('leads')
+      onClick: () => navigateToView('leads'),
     },
     {
       title: 'Open Deals',
@@ -365,7 +350,7 @@ const Dashboard = ({
       icon: Briefcase,
       color: 'green',
       description: `Value: $${dashboardData.openDealsValue.toLocaleString()}`,
-      onClick: () => navigateToView('deals')
+      onClick: () => navigateToView('deals'),
     },
     {
       title: 'Total Contacts',
@@ -373,7 +358,7 @@ const Dashboard = ({
       icon: UsersRound,
       color: 'indigo',
       description: 'All contacts managed.',
-      onClick: () => navigateToView('contacts')
+      onClick: () => navigateToView('contacts'),
     },
     {
       title: 'Active Tasks',
@@ -381,7 +366,7 @@ const Dashboard = ({
       icon: CheckSquare,
       color: 'teal',
       description: 'Tasks needing attention.',
-      onClick: () => navigateToView('activities')
+      onClick: () => navigateToView('activities'),
     },
     {
       title: 'Upcoming Meetings',
@@ -389,10 +374,11 @@ const Dashboard = ({
       icon: CalendarDays,
       color: 'pink',
       description: 'Meetings in next 7 days.',
-      onClick: () => navigateToView('activities') // Or 'meetings' if you have that view
-    }
+      onClick: () => navigateToView('activities'),
+    },
   ];
 
+  // Tooltip for charts
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -418,7 +404,7 @@ const Dashboard = ({
       {/* Punch In/Out Section */}
       <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
         <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
-          <Clock size={22} className="mr-2 text-blue-500 dark:text-blue-400" />{' '}
+          <Clock size={22} className="mr-2 text-blue-500 dark:text-blue-400" />
           Daily Attendance
         </h3>
         {punchStatus.isLoading ? (
@@ -443,21 +429,19 @@ const Dashboard = ({
             <div className="text-sm text-gray-600 dark:text-gray-400">
               {punchStatus.status === 'in' ? (
                 <>
-                  {' '}
                   Currently{' '}
                   <span className="font-semibold text-green-600 dark:text-green-400">
                     Punched In
-                  </span>{' '}
+                  </span>
                   {punchStatus.lastPunchTime &&
                     ` since ${punchStatus.lastPunchTime.toLocaleTimeString()}`}
                 </>
               ) : (
                 <>
-                  {' '}
                   Currently{' '}
                   <span className="font-semibold text-red-500 dark:text-red-400">
                     Punched Out
-                  </span>{' '}
+                  </span>
                   {punchStatus.lastPunchTime &&
                     ` since ${punchStatus.lastPunchTime.toLocaleTimeString()}`}
                 </>
@@ -466,7 +450,7 @@ const Dashboard = ({
           </div>
         )}
         <button
-          onClick={() => navigateToView('myLog')}
+          onClick={() => navigateToView('mylog')}
           className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center"
         >
           View My Activity Log <ArrowRight size={16} className="ml-1" />
@@ -498,8 +482,7 @@ const Dashboard = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
-            <LucidePieChart size={22} className="mr-2 text-blue-500" /> Lead
-            Status
+            <LucidePieChart size={22} className="mr-2 text-blue-500" /> Lead Status
           </h3>
           {isLoading ? (
             <LoadingSpinner text="Loading chart..." />
@@ -534,8 +517,7 @@ const Dashboard = ({
         </div>
         <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
-            <BarChart3 size={22} className="mr-2 text-green-500" /> Deal
-            Pipeline
+            <BarChart3 size={22} className="mr-2 text-green-500" /> Deal Pipeline
           </h3>
           {isLoading ? (
             <LoadingSpinner text="Loading chart..." />
@@ -574,8 +556,7 @@ const Dashboard = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
-            <ActivityIcon size={22} className="mr-2 text-purple-500" /> Activity
-            Types
+            <ActivityIcon size={22} className="mr-2 text-purple-500" /> Activity Types
           </h3>
           {isLoading ? (
             <LoadingSpinner text="Loading chart..." />
@@ -610,8 +591,7 @@ const Dashboard = ({
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
-            <ListChecks size={22} className="mr-2 text-orange-500" /> Activity
-            Statuses
+            <ListChecks size={22} className="mr-2 text-orange-500" /> Activity Statuses
           </h3>
           {isLoading ? (
             <LoadingSpinner text="Loading chart..." />
@@ -654,18 +634,18 @@ const Dashboard = ({
         </div>
       </div>
       <style>{`
-          @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-          .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
-          .recharts-legend-item-text { fill: ${
-            theme === 'dark' ? '#D1D5DB' : '#1F2937'
-          } !important; }
-          .recharts-tooltip-label { color: ${
-            theme === 'dark' ? '#D1D5DB' : '#1F2937'
-          } !important; }
-          .recharts-cartesian-axis-tick-value tspan { fill: ${
-            theme === 'dark' ? '#9ca3af' : '#4b5563'
-          } !important; }
-        `}</style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+        .recharts-legend-item-text { fill: ${
+          theme === 'dark' ? '#D1D5DB' : '#1F2937'
+        } !important; }
+        .recharts-tooltip-label { color: ${
+          theme === 'dark' ? '#D1D5DB' : '#1F2937'
+        } !important; }
+        .recharts-cartesian-axis-tick-value tspan { fill: ${
+          theme === 'dark' ? '#9ca3af' : '#4b5563'
+        } !important; }
+      `}</style>
     </div>
   );
 };
