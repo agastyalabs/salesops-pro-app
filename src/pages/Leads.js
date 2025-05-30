@@ -6,6 +6,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  doc,
   serverTimestamp,
   orderBy,
   where
@@ -13,20 +14,12 @@ import {
 import {
   Users,
   PlusCircle,
-  Search,
-  Filter,
-  UserCircle,
-  Building,
-  Mail,
-  Phone,
-  DollarSign,
   Edit3,
   Trash2
 } from 'lucide-react';
-import { Modal } from '../components/Modal';
+import Modal from '../components/Modal';
 import InputField from '../components/InputField';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { Tooltip } from '../components/Tooltip';
 
 const Leads = ({
   userId,
@@ -51,7 +44,7 @@ const Leads = ({
     let leadsRef = collection(db, `artifacts/${currentAppId}/users/${userId}/leads`);
     let q = query(leadsRef, orderBy('createdAt', 'desc'));
     if (filterStatus) {
-      q = query(q, where('status', '==', filterStatus));
+      q = query(leadsRef, where('status', '==', filterStatus), orderBy('createdAt', 'desc'));
     }
     const unsub = onSnapshot(
       q,
@@ -104,7 +97,7 @@ const Leads = ({
       if (editingLead) {
         // Update
         await updateDoc(
-          collection(db, `artifacts/${currentAppId}/users/${userId}/leads`).doc(editingLead.id),
+          doc(db, `artifacts/${currentAppId}/users/${userId}/leads`, editingLead.id),
           leadData
         );
         setSuccess('Lead updated.');
@@ -129,7 +122,7 @@ const Leads = ({
     if (!window.confirm('Delete this lead?')) return;
     setIsLoading(true);
     try {
-      await deleteDoc(collection(db, `artifacts/${currentAppId}/users/${userId}/leads`).doc(id));
+      await deleteDoc(doc(db, `artifacts/${currentAppId}/users/${userId}/leads`, id));
       setSuccess('Lead deleted.');
     } catch {
       setError('Failed to delete lead.');
@@ -219,69 +212,70 @@ const Leads = ({
         </div>
       )}
       {/* Lead Modal */}
-      {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <form onSubmit={handleSaveLead} className="space-y-4">
-            <h2 className="text-xl font-bold mb-2">{editingLead ? 'Edit Lead' : 'Add Lead'}</h2>
-            <InputField
-              label="Name"
-              name="name"
-              defaultValue={editingLead?.name || ''}
-              required
-            />
-            <InputField
-              label="Company"
-              name="company"
-              defaultValue={editingLead?.company || ''}
-            />
-            <InputField
-              label="Email"
-              name="email"
-              type="email"
-              defaultValue={editingLead?.email || ''}
-            />
-            <InputField
-              label="Phone"
-              name="phone"
-              defaultValue={editingLead?.phone || ''}
-            />
-            <InputField
-              label="Deal Value"
-              name="value"
-              type="number"
-              defaultValue={editingLead?.value || ''}
-            />
-            <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <select
-                name="status"
-                defaultValue={editingLead?.status || 'New'}
-                className="border px-3 py-2 rounded w-full"
-              >
-                <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Lost">Lost</option>
-              </select>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                type="button"
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                onClick={closeModal}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-              >
-                {editingLead ? 'Update' : 'Add'}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={editingLead ? 'Edit Lead' : 'Add Lead'}
+      >
+        <form onSubmit={handleSaveLead} className="space-y-4">
+          <InputField
+            label="Name"
+            name="name"
+            defaultValue={editingLead?.name || ''}
+            required
+          />
+          <InputField
+            label="Company"
+            name="company"
+            defaultValue={editingLead?.company || ''}
+          />
+          <InputField
+            label="Email"
+            name="email"
+            type="email"
+            defaultValue={editingLead?.email || ''}
+          />
+          <InputField
+            label="Phone"
+            name="phone"
+            defaultValue={editingLead?.phone || ''}
+          />
+          <InputField
+            label="Deal Value"
+            name="value"
+            type="number"
+            defaultValue={editingLead?.value || ''}
+          />
+          <div>
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <select
+              name="status"
+              defaultValue={editingLead?.status || 'New'}
+              className="border px-3 py-2 rounded w-full"
+            >
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Lost">Lost</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+              onClick={closeModal}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {editingLead ? 'Update' : 'Add'}
+            </button>
+          </div>
+        </form>
+      </Modal>
       <div className="mt-8">
         <button
           className="text-blue-600 underline"
