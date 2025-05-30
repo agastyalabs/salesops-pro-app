@@ -1,3 +1,10 @@
+import NavigationBar from '../components/NavigationBar';
+
+// Inside your component's return:
+<NavigationBar
+  onBack={() => navigateToView('dashboard')}
+  goToDashboard={() => navigateToView('dashboard')}
+/>
 import React from 'react';
 
 const Contacts = ({ userId, userProfile, db, setError, setSuccess, currentAppId, navigateToView }) => {
