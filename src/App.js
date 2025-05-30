@@ -44,9 +44,9 @@ function App() {
       setIsAuthReady(true);
 
       if (!user) {
-  setCurrentUserProfile(null);
-  setCurrentView('homepage');
-}
+        setCurrentUserProfile(null);
+        setCurrentView('homepage'); // <-- Show homepage for unauthenticated users!
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -72,7 +72,7 @@ function App() {
     setIsLoading(true);
     try {
       await signOut(auth);
-      setCurrentView('login');
+      setCurrentView('homepage'); // After sign out, show homepage
       setCurrentUserProfile(null);
       setAppSuccess('Logged out successfully.');
     } catch (error) {
@@ -98,13 +98,19 @@ function App() {
           />
         );
       }
-      // Default for unauthenticated: login
+      // Default for unauthenticated: homepage
       return (
-        <LoginPage
-          setCurrentViewFunction={setCurrentView}
+        <Homepage
           setError={setAppError}
           setSuccess={setAppSuccess}
+          db={db}
+          currentAppId={appIdString}
+          navigateToView={setCurrentView}
           theme={theme}
+          setTheme={setTheme}
+          handleSignOut={handleSignOut}
+          isAuthenticated={!!authUser}
+          toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         />
       );
     }
