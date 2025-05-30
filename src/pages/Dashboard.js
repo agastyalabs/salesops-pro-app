@@ -5,7 +5,7 @@ import {
 } from 'firebase/firestore';
 import {
   Users, Briefcase, UsersRound, CheckSquare, CalendarDays, LogIn, LogOut, ArrowRight,
-  BarChart3, ActivityIcon as ActivityLucideIcon, PieChart as LucidePieChart, ListChecks
+  BarChart3, ActivityIcon as ActivityLucideIcon, PieChart as LucidePieChart, ListChecks, Clock // <-- Added Clock!
 } from 'lucide-react';
 import {
   PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -16,7 +16,7 @@ import { CHART_COLORS } from '../config';
 import { formatDateTime } from '../utils/helpers';
 import { auth } from '../utils/firebase';
 
-// Gemini AI widgets/components (adapt to your codebase location)
+// Gemini AI widgets/components
 import GeminiInsightsPanel from '../components/GeminiInsightsPanel';
 import GeminiSmartSearchPanel from '../components/GeminiSmartSearchPanel';
 import GeminiActivitySummaryPanel from '../components/GeminiActivitySummaryPanel';
@@ -46,7 +46,8 @@ const Dashboard = ({
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         console.warn("Geolocation is not supported.");
-        resolve(null); return;
+        resolve(null);
+        return;
       }
       navigator.geolocation.getCurrentPosition(
         (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
