@@ -43,18 +43,13 @@ function App() {
       setCurrentUserId(user ? user.uid : null);
       setIsAuthReady(true);
 
-      // On logout or no user, reset profile and show homepage (not login)
-      if (!user) {
-        setCurrentUserProfile(null);
-        // Don't force currentView here; let user navigation pick signup/login/homepage
-        // If you want to force homepage always, uncomment below:
-        // setCurrentView('homepage');
-      }
+      // Reset profile and keep view as is to allow navigation to login/signup/homepage
+      if (!user) setCurrentUserProfile(null);
     });
     return () => unsubscribe();
   }, []);
 
-  // Listen to user profile if logged in (***FIXED PATH***)
+  // Listen to user profile if logged in
   useEffect(() => {
     if (currentUserId) {
       const userDocRef = doc(db, 'artifacts', appIdString, 'users', currentUserId);
