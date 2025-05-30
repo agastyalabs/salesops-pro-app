@@ -44,9 +44,9 @@ function App() {
       setIsAuthReady(true);
 
       if (!user) {
-        setCurrentUserProfile(null);
-        setCurrentView('login');
-      }
+  setCurrentUserProfile(null);
+  setCurrentView('homepage');
+}
     });
     return () => unsubscribe();
   }, []);
