@@ -1,7 +1,6 @@
-// src/pages/Dashboard.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, onSnapshot, getDocs, where, Timestamp, serverTimestamp, addDoc, orderBy, limit } from 'firebase/firestore';
-import { Users, Briefcase, DollarSign, CheckSquare, CalendarDays, UsersRound, Clock, LogIn, LogOut, ArrowRight, Gift, BarChart3, ActivityIcon, PieChart as LucidePieChart, ListChecks } from 'lucide-react';
+import { collection, query, onSnapshot, getDocs, orderBy, limit } from 'firebase/firestore';
+import { Users, Briefcase, CheckSquare, CalendarDays, UsersRound, Clock, LogIn, LogOut, ArrowRight, BarChart3, ActivityIcon, PieChart as LucidePieChart, ListChecks } from 'lucide-react';
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { CHART_COLORS } from '../config';
@@ -168,7 +167,8 @@ const Dashboard = ({ userId, userProfile, db, setError, setSuccess, currentAppId
         }
     };
 
-    const StatCard = ({ title, value, icon: Icon, color, description, isLoadingCard }) => {
+    // Modified StatCard to support onClick
+    const StatCard = ({ title, value, icon: Icon, color, description, isLoadingCard, onClick }) => {
         const colors = {
             blue: "bg-blue-500 dark:bg-blue-600",
             green: "bg-green-500 dark:bg-green-600",
@@ -179,7 +179,13 @@ const Dashboard = ({ userId, userProfile, db, setError, setSuccess, currentAppId
             indigo: "bg-indigo-500 dark:bg-indigo-600"
         };
         return (
-            <div className={`p-6 rounded-xl shadow-lg text-white ${colors[color]} transition-all duration-300 hover:shadow-xl hover:scale-105`}>
+            <div
+                className={`p-6 rounded-xl shadow-lg text-white ${colors[color]} transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer`}
+                onClick={onClick}
+                tabIndex={0}
+                role="button"
+                aria-pressed="false"
+            >
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="mb-2 flex items-center">
@@ -196,12 +202,48 @@ const Dashboard = ({ userId, userProfile, db, setError, setSuccess, currentAppId
 
     if (!userProfile) return <LoadingSpinner text="Loading dashboard..." />;
 
+    // Each stat card now has an onClick handler for navigation
     const displayStats = [
-        { title: "Total Leads", value: dashboardData.totalLeads, icon: Users, color: "blue", description: "All leads in your pipeline." },
-        { title: "Open Deals", value: dashboardData.openDealsCount, icon: Briefcase, color: "green", description: `Value: $${dashboardData.openDealsValue.toLocaleString()}` },
-        { title: "Total Contacts", value: dashboardData.totalContacts, icon: UsersRound, color: "indigo", description: "All contacts managed." },
-        { title: "Active Tasks", value: dashboardData.activeTasks, icon: CheckSquare, color: "teal", description: "Tasks needing attention." },
-        { title: "Upcoming Meetings", value: dashboardData.upcomingMeetings, icon: CalendarDays, color: "pink", description: "Meetings in next 7 days." },
+        {
+            title: "Total Leads",
+            value: dashboardData.totalLeads,
+            icon: Users,
+            color: "blue",
+            description: "All leads in your pipeline.",
+            onClick: () => navigateToView('leads')
+        },
+        {
+            title: "Open Deals",
+            value: dashboardData.openDealsCount,
+            icon: Briefcase,
+            color: "green",
+            description: `Value: $${dashboardData.openDealsValue.toLocaleString()}`,
+            onClick: () => navigateToView('deals')
+        },
+        {
+            title: "Total Contacts",
+            value: dashboardData.totalContacts,
+            icon: UsersRound,
+            color: "indigo",
+            description: "All contacts managed.",
+            onClick: () => navigateToView('contacts')
+        },
+        {
+            title: "Active Tasks",
+            value: dashboardData.activeTasks,
+            icon: CheckSquare,
+            color: "teal",
+            description: "Tasks needing attention.",
+            onClick: () => navigateToView('activities')
+        },
+        {
+            title: "Upcoming Meetings",
+            value: dashboardData.upcomingMeetings,
+            icon: CalendarDays,
+            color: "pink",
+            description: "Meetings in next 7 days.",
+            onClick: () => navigateToView('activities') // You can update to 'meetings' if you have that view
+        },
     ];
 
     const CustomTooltip = ({ active, payload, label }) => {
