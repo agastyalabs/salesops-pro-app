@@ -11,11 +11,13 @@ import {
 import { collection, query, getDocs, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { AlertCircle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import StatCards from './StatCards';
 import RecentActivities from './RecentActivities';
 import PerformanceChart from './PerformanceChart';
 
 export default function DashboardHome() {
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState({
@@ -34,13 +36,19 @@ export default function DashboardHome() {
   });
 
   useEffect(() => {
+    if (!currentUser) {
+      setError('Please log in to view the dashboard');
+      setLoading(false);
+      return;
+    }
     fetchDashboardData();
-    // Set up real-time listeners for updates
-    const interval = setInterval(fetchDashboardData, 300000); // Refresh every 5 minutes
+    const interval = setInterval(fetchDashboardData, 300000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentUser]);
 
   const fetchDashboardData = async () => {
+    if (!currentUser) return;
+    
     try {
       setLoading(true);
       setError(null);
@@ -66,9 +74,13 @@ export default function DashboardHome() {
 
   const fetchStats = async () => {
     try {
-      const leadsQuery = query(collection(db, 'leads'));
+      const leadsQuery = query(
+        collection(db, 'leads'),
+        where('organizationId', '==', currentUser.uid)
+      );
       const dealsQuery = query(
         collection(db, 'deals'),
+        where('organizationId', '==', currentUser.uid),
         where('status', '==', 'active')
       );
 
@@ -98,7 +110,7 @@ export default function DashboardHome() {
       };
     } catch (error) {
       console.error('Error fetching stats:', error);
-      throw new Error('Failed to fetch statistics');
+      throw new Error(`Failed to fetch statistics: ${error.message}`);
     }
   };
 
@@ -106,6 +118,7 @@ export default function DashboardHome() {
     try {
       const activitiesQuery = query(
         collection(db, 'activities'),
+        where('organizationId', '==', currentUser.uid),
         orderBy('timestamp', 'desc'),
         limit(5)
       );
@@ -122,25 +135,30 @@ export default function DashboardHome() {
       }));
     } catch (error) {
       console.error('Error fetching activities:', error);
-      throw new Error('Failed to fetch activities');
+      throw new Error(`Failed to fetch activities: ${error.message}`);
     }
   };
 
   const fetchPerformanceData = async () => {
     try {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
+
+      const performanceQuery = query(
+        collection(db, 'activities'),
+        where('organizationId', '==', currentUser.uid),
+        where('timestamp', '>=', startDate),
+        orderBy('timestamp', 'asc')
+      );
+
+      const snapshot = await getDocs(performanceQuery);
       const dates = [...Array(7)].map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - i);
         return d.toISOString().split('T')[0];
       }).reverse();
 
-      const performanceQuery = query(
-        collection(db, 'activities'),
-        where('timestamp', '>=', new Date(dates[0])),
-        orderBy('timestamp', 'asc')
-      );
-
-      const snapshot = await getDocs(performanceQuery);
       const dailyData = dates.map(date => ({
         date,
         leads: 0,
@@ -164,7 +182,7 @@ export default function DashboardHome() {
       };
     } catch (error) {
       console.error('Error fetching performance data:', error);
-      throw new Error('Failed to fetch performance data');
+      throw new Error(`Failed to fetch performance data: ${error.message}`);
     }
   };
 
