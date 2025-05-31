@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, CssBaseline, Typography } from '@mui/material';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -160,10 +160,6 @@ function App() {
     };
 
     initializeApp();
-
-    return () => {
-      // Cleanup logic if needed
-    };
   }, []);
 
   if (error) {
@@ -206,104 +202,72 @@ function App() {
       <CssBaseline />
       <ErrorBoundary>
         <Router>
-          <SidebarLayout>
-            <NavigationBar />
-            <Box component="main" sx={{ flexGrow: 1, height: '100vh', overflow: 'auto' }}>
-              <Routes>
-                {/* Dashboard Route */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-
-                {/* AI Features Routes */}
-                <Route 
-                  path="/ai-search" 
-                  element={
+          <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+            <SidebarLayout>
+              <NavigationBar />
+              <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: 'auto' }}>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/ai-search" element={
                     <Box sx={{ p: 3 }}>
                       <AISmartSearch />
                       <GeminiSmartSearchPanel />
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/ai-insights" 
-                  element={
+                  } />
+                  <Route path="/ai-insights" element={
                     <Box sx={{ p: 3 }}>
                       <GeminiInsightsPanel />
                       <AITagsSuggest />
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/email-drafts" 
-                  element={
+                  } />
+                  <Route path="/email-drafts" element={
                     <Box sx={{ p: 3 }}>
                       <AIDraftEmail />
                       <GeminiActivitySummaryPanel />
                     </Box>
-                  } 
-                />
-
-                {/* Placeholder Routes */}
-                <Route 
-                  path="/customers/*" 
-                  element={
+                  } />
+                  <Route path="/customers/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Customers</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/reports/*" 
-                  element={
+                  } />
+                  <Route path="/reports/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Reports</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/settings/*" 
-                  element={
+                  } />
+                  <Route path="/settings/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Settings</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/integrations/*" 
-                  element={
+                  } />
+                  <Route path="/integrations/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Integrations</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/organization/*" 
-                  element={
+                  } />
+                  <Route path="/organization/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Organization</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-                <Route 
-                  path="/subscription/*" 
-                  element={
+                  } />
+                  <Route path="/subscription/*" element={
                     <Box sx={{ p: 3 }}>
                       <Typography variant="h4">Subscription</Typography>
                       <Typography variant="body1">Coming soon...</Typography>
                     </Box>
-                  } 
-                />
-
-                {/* 404 Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Box>
-          </SidebarLayout>
+                  } />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Box>
+            </SidebarLayout>
+          </Box>
         </Router>
       </ErrorBoundary>
     </ThemeProvider>
