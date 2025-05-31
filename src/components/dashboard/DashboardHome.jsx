@@ -6,138 +6,233 @@ import {
   Typography,
   Card,
   CardContent,
-  Button,
+  CardHeader,
+  LinearProgress,
   List,
   ListItem,
   ListItemText,
+  ListItemAvatar,
+  Avatar,
   Divider
 } from '@mui/material';
-import { collection, query, limit, getDocs, where, orderBy } from 'firebase/firestore';
+import {
+  TrendingUp as TrendingUpIcon,
+  Person as PersonIcon,
+  BusinessCenter as BusinessCenterIcon,
+  AttachMoney as AttachMoneyIcon
+} from '@mui/icons-material';
+import { collection, query, getDocs, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function DashboardHome() {
   const { currentUser } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalCustomers: 0,
     activeDeals: 0,
-    totalRevenue: 0,
+    monthlyRevenue: 0,
     recentActivities: []
   });
 
   useEffect(() => {
     async function fetchDashboardData() {
+      if (!currentUser) return;
+
       try {
-        // Fetch customers count
+        // Get total customers
         const customersQuery = query(
           collection(db, 'customers'),
           where('organizationId', '==', currentUser.uid)
         );
-        const customersSnap = await getDocs(customersQuery);
+        const customersSnapshot = await getDocs(customersQuery);
         
-        // Fetch active deals
+        // Get active deals
         const dealsQuery = query(
           collection(db, 'deals'),
           where('organizationId', '==', currentUser.uid),
           where('status', '==', 'active')
         );
-        const dealsSnap = await getDocs(dealsQuery);
-        
-        // Calculate total revenue
-        let revenue = 0;
-        dealsSnap.forEach(doc => {
-          revenue += doc.data().value || 0;
-        });
+        const dealsSnapshot = await getDocs(dealsQuery);
 
-        // Fetch recent activities
+        // Calculate revenue (from closed deals in current month)
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const revenueQuery = query(
+          collection(db, 'deals'),
+          where('organizationId', '==', currentUser.uid),
+          where('status', '==', 'won'),
+          where('closedAt', '>=', startOfMonth)
+        );
+        const revenueSnapshot = await getDocs(revenueQuery);
+        const monthlyRevenue = revenueSnapshot.docs.reduce((sum, doc) => sum + (doc.data().value || 0), 0);
+
+        // Get recent activities
         const activitiesQuery = query(
           collection(db, 'activities'),
           where('organizationId', '==', currentUser.uid),
           orderBy('timestamp', 'desc'),
           limit(5)
         );
-        const activitiesSnap = await getDocs(activitiesQuery);
-        const activities = [];
-        activitiesSnap.forEach(doc => {
-          activities.push({ id: doc.id, ...doc.data() });
-        });
+        const activitiesSnapshot = await getDocs(activitiesQuery);
+        const recentActivities = activitiesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         setMetrics({
-          totalCustomers: customersSnap.size,
-          activeDeals: dealsSnap.size,
-          totalRevenue: revenue,
-          recentActivities: activities
+          totalCustomers: customersSnapshot.size,
+          activeDeals: dealsSnapshot.size,
+          monthlyRevenue,
+          recentActivities
         });
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchDashboardData();
   }, [currentUser]);
 
+  const MetricCard = ({ title, value, icon, color }) => (
+    <Card>
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Avatar sx={{ bgcolor: `${color}.main`, mr: 2 }}>
+            {icon}
+          </Avatar>
+          <Typography variant="h6" component="div">
+            {title}
+          </Typography>
+        </Box>
+        <Typography variant="h4" component="div" gutterBottom>
+          {value}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+
+  if (loading) {
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Welcome back!
       </Typography>
+      <Typography variant="body2" color="text.secondary" paragraph>
+        Here's what's happening with your business today
+      </Typography>
 
       {/* Key Metrics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Total Customers
-            </Typography>
-            <Typography variant="h4">
-              {metrics.totalCustomers}
-            </Typography>
-          </Paper>
+          <MetricCard
+            title="Total Customers"
+            value={metrics.totalCustomers}
+            icon={<PersonIcon />}
+            color="primary"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Active Deals
-            </Typography>
-            <Typography variant="h4">
-              {metrics.activeDeals}
-            </Typography>
-          </Paper>
+          <MetricCard
+            title="Active Deals"
+            value={metrics.activeDeals}
+            icon={<BusinessCenterIcon />}
+            color="success"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Total Revenue
-            </Typography>
-            <Typography variant="h4">
-              ${metrics.totalRevenue.toLocaleString()}
-            </Typography>
-          </Paper>
+          <MetricCard
+            title="Monthly Revenue"
+            value={`$${metrics.monthlyRevenue.toLocaleString()}`}
+            icon={<AttachMoneyIcon />}
+            color="warning"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <MetricCard
+            title="Growth"
+            value="+12.5%"
+            icon={<TrendingUpIcon />}
+            color="info"
+          />
         </Grid>
       </Grid>
 
       {/* Recent Activities */}
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={6}>
           <Card>
+            <CardHeader title="Recent Activities" />
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="h6">Recent Activities</Typography>
-                <Button color="primary">View All</Button>
-              </Box>
               <List>
                 {metrics.recentActivities.map((activity, index) => (
                   <React.Fragment key={activity.id}>
-                    <ListItem>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar>{activity.type?.[0] || 'A'}</Avatar>
+                      </ListItemAvatar>
                       <ListItemText
                         primary={activity.description}
-                        secondary={new Date(activity.timestamp).toLocaleString()}
+                        secondary={new Date(activity.timestamp?.toDate()).toLocaleString()}
                       />
                     </ListItem>
                     {index < metrics.recentActivities.length - 1 && <Divider />}
                   </React.Fragment>
                 ))}
+                {metrics.recentActivities.length === 0 && (
+                  <ListItem>
+                    <ListItemText primary="No recent activities" />
+                  </ListItem>
+                )}
               </List>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Quick Actions Card */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardHeader title="Quick Actions" />
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' }
+                    }}
+                    onClick={() => navigate('/customers/new')}
+                  >
+                    <PersonIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                    <Typography>Add Customer</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' }
+                    }}
+                    onClick={() => navigate('/deals/new')}
+                  >
+                    <BusinessCenterIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
+                    <Typography>New Deal</Typography>
+                  </Paper>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
