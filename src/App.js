@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./utils/firebase"; // <-- adjust this path if needed
+import { auth } from "./utils/firebase";
 import SidebarLayout from "./components/SidebarLayout";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
@@ -9,7 +9,7 @@ import Contacts from "./pages/Contacts";
 import Deals from "./pages/Deals";
 import Activities from "./pages/Activities";
 import LoginPage from "./pages/LoginPage";
-// import SignupPage from "./pages/SignupPage"; // If you add a signup page
+// import SignupPage from "./pages/SignupPage"; // Uncomment if using signup
 
 function App() {
   const [user, setUser] = useState(null);
