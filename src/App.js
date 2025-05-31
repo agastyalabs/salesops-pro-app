@@ -13,7 +13,7 @@ import AIDraftEmail from './components/AIDraftEmail';
 import GeminiActivitySummaryPanel from './components/GeminiActivitySummaryPanel';
 import GeminiInsightsPanel from './components/GeminiInsightsPanel';
 import GeminiSmartSearchPanel from './components/GeminiSmartSearchPanel';
-import LoadingSpinner from './components/LoadingSpinner';
+import { LoadingSpinner } from './components/LoadingSpinner'; // Changed this line
 import NavigationBar from './components/NavigationBar';
 
 // Theme configuration
