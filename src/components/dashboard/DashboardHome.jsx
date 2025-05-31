@@ -141,7 +141,6 @@ export default function DashboardHome() {
         });
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        // Set fallback data if fetch fails
         setMetrics({
           totalCustomers: 0,
           activeDeals: 0,
@@ -170,7 +169,7 @@ export default function DashboardHome() {
         Welcome back!
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        Here's what's happening with your business today
+        {"Here's what's happening with your business today"}
       </Typography>
 
       {/* Key Metrics */}
