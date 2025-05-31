@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, CssBaseline } from '@mui/material';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -52,6 +52,7 @@ const theme = createTheme({
 function AppContent() {
   const [isLoading, setIsLoading] = React.useState(true);
   const { user } = useAuth();
+  const location = useLocation();
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -69,17 +70,32 @@ function AppContent() {
   }
 
   return (
-    <Router>
-      <Box sx={{ display: 'flex' }}>
-        <SidebarLayout>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard/*" element={<Dashboard />} />
-            {/* Add other routes as needed */}
-          </Routes>
-        </SidebarLayout>
-      </Box>
-    </Router>
+    <Box sx={{ display: 'flex' }}>
+      <SidebarLayout>
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/dashboard/*" 
+            element={
+              user ? (
+                <Dashboard />
+              ) : (
+                <Navigate to="/signin" state={{ from: location }} replace />
+              )
+            } 
+          />
+        </Routes>
+      </SidebarLayout>
+    </Box>
   );
 }
 
