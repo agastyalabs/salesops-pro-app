@@ -1,59 +1,82 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./utils/firebase";
-import SidebarLayout from "./components/SidebarLayout";
-import Dashboard from "./pages/Dashboard";
-import Leads from "./pages/Leads";
-import Contacts from "./pages/Contacts";
-import Deals from "./pages/Deals";
-import Activities from "./pages/Activities";
-import LoginPage from "./pages/LoginPage";
-// import SignupPage from "./pages/SignupPage"; // Uncomment if you add signup
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AuthProvider } from './contexts/AuthContext';
+
+// Auth Components
+import SignIn from './components/auth/SignIn';
+import SignUp from './components/auth/SignUp';
+import ForgotPassword from './components/auth/ForgotPassword';
+import PrivateRoute from './components/auth/PrivateRoute';
+
+// Main Components
+import LandingPage from './components/landing/LandingPage';
+import Dashboard from './components/dashboard/Dashboard';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#2563eb', // Blue
+    },
+    secondary: {
+      main: '#7c3aed', // Purple
+    },
+    background: {
+      default: '#f8fafc',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+    },
+    h2: {
+      fontWeight: 600,
+    },
+    h3: {
+      fontWeight: 600,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          textTransform: 'none',
+          fontWeight: 500,
+        },
+      },
+    },
+  },
+});
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setCheckingAuth(false);
-    });
-    return () => unsub();
-  }, []);
-
-  if (checkingAuth) return <div>Loading...</div>;
-
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
-        />
-        {/* <Route path="/signup" element={!user ? <SignupPage /> : <Navigate to="/dashboard" />} /> */}
-        <Route
-          path="/*"
-          element={
-            user ? (
-              <SidebarLayout user={user}>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard userProfile={user} />} />
-                  <Route path="/leads" element={<Leads />} />
-                  <Route path="/contacts" element={<Contacts />} />
-                  <Route path="/deals" element={<Deals />} />
-                  <Route path="/activities" element={<Activities />} />
-                  <Route path="*" element={<Navigate to="/dashboard" />} />
-                </Routes>
-              </SidebarLayout>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard/*"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 
