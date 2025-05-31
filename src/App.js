@@ -7,6 +7,8 @@ import SidebarLayout from './components/SidebarLayout';
 import Dashboard from './components/dashboard/Dashboard';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LandingPage from './components/landing/LandingPage';
+import SignIn from './components/auth/SignIn';
 
 const theme = createTheme({
   palette: {
@@ -70,32 +72,25 @@ function AppContent() {
   }
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <SidebarLayout>
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              user ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <Navigate to="/signin" replace />
-              )
-            } 
-          />
-          <Route 
-            path="/dashboard/*" 
-            element={
-              user ? (
+    <Routes>
+      <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/signin" element={!user ? <SignIn /> : <Navigate to="/dashboard" replace />} />
+      <Route
+        path="/dashboard/*"
+        element={
+          user ? (
+            <Box sx={{ display: 'flex' }}>
+              <SidebarLayout user={user}>
                 <Dashboard />
-              ) : (
-                <Navigate to="/signin" state={{ from: location }} replace />
-              )
-            } 
-          />
-        </Routes>
-      </SidebarLayout>
-    </Box>
+              </SidebarLayout>
+            </Box>
+          ) : (
+            <Navigate to="/signin" state={{ from: location }} replace />
+          )
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
