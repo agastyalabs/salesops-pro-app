@@ -9,6 +9,8 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LandingPage from './components/landing/LandingPage';
 import SignIn from './components/auth/SignIn';
+import { getAuth, signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -55,6 +57,8 @@ function AppContent() {
   const [isLoading, setIsLoading] = React.useState(true);
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const auth = getAuth();
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -62,6 +66,15 @@ function AppContent() {
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/signin');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -73,14 +86,20 @@ function AppContent() {
 
   return (
     <Routes>
-      <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
-      <Route path="/signin" element={!user ? <SignIn /> : <Navigate to="/dashboard" replace />} />
+      <Route 
+        path="/" 
+        element={!user ? <LandingPage /> : <Navigate to="/dashboard" replace />} 
+      />
+      <Route 
+        path="/signin" 
+        element={!user ? <SignIn /> : <Navigate to="/dashboard" replace />} 
+      />
       <Route
         path="/dashboard/*"
         element={
           user ? (
             <Box sx={{ display: 'flex' }}>
-              <SidebarLayout user={user}>
+              <SidebarLayout user={user} onLogout={handleLogout}>
                 <Dashboard />
               </SidebarLayout>
             </Box>
