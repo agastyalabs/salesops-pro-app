@@ -10,23 +10,29 @@ import {
   Box 
 } from '@mui/material';
 import { 
-  Mail as MailIcon,
-  Phone as PhoneIcon,
-  BusinessCenter as BusinessCenterIcon,
-  Assignment as AssignmentIcon
-} from '@mui/icons-material';
+  Mail,
+  Phone,
+  Briefcase,
+  FileText,
+  Calendar,
+  CheckSquare
+} from 'lucide-react';
 
 export default function RecentActivities({ activities }) {
   const getActivityIcon = (type) => {
     switch (type) {
       case 'email':
-        return <MailIcon />;
+        return <Mail size={20} strokeWidth={1.5} />;
       case 'call':
-        return <PhoneIcon />;
+        return <Phone size={20} strokeWidth={1.5} />;
       case 'deal':
-        return <BusinessCenterIcon />;
+        return <Briefcase size={20} strokeWidth={1.5} />;
+      case 'meeting_scheduled':
+        return <Calendar size={20} strokeWidth={1.5} />;
+      case 'task_completed':
+        return <CheckSquare size={20} strokeWidth={1.5} />;
       default:
-        return <AssignmentIcon />;
+        return <FileText size={20} strokeWidth={1.5} />;
     }
   };
 
@@ -38,6 +44,10 @@ export default function RecentActivities({ activities }) {
         return '#4caf50';
       case 'deal':
         return '#ff9800';
+      case 'meeting_scheduled':
+        return '#9c27b0';
+      case 'task_completed':
+        return '#00bcd4';
       default:
         return '#9e9e9e';
     }
@@ -48,11 +58,12 @@ export default function RecentActivities({ activities }) {
       sx={{
         p: 3,
         height: '100%',
-        bgcolor: 'background.paper'
+        bgcolor: 'background.paper',
+        borderRadius: 2
       }}
       elevation={0}
     >
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
         Recent Activities
       </Typography>
 
@@ -61,10 +72,14 @@ export default function RecentActivities({ activities }) {
           <ListItem
             key={activity.id}
             sx={{
-              px: 0,
+              px: 2,
               py: 2,
-              borderBottom: index !== activities.length - 1 ? 1 : 0,
-              borderColor: 'divider'
+              borderRadius: 1,
+              mb: index !== activities.length - 1 ? 1 : 0,
+              bgcolor: `${getActivityColor(activity.type)}08`,
+              '&:hover': {
+                bgcolor: `${getActivityColor(activity.type)}12`
+              }
             }}
           >
             <ListItemAvatar>
@@ -79,15 +94,17 @@ export default function RecentActivities({ activities }) {
             </ListItemAvatar>
             <ListItemText
               primary={activity.description}
-              secondary={new Date(activity.timestamp?.toDate()).toLocaleString()}
+              secondary={activity.timestamp?.toDate().toLocaleString()}
               primaryTypographyProps={{
                 variant: 'body2',
                 color: 'text.primary',
-                gutterBottom: true
+                gutterBottom: true,
+                fontWeight: 500
               }}
               secondaryTypographyProps={{
                 variant: 'caption',
-                color: 'text.secondary'
+                color: 'text.secondary',
+                sx: { display: 'flex', alignItems: 'center', gap: 0.5 }
               }}
             />
           </ListItem>
