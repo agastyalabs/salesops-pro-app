@@ -134,12 +134,33 @@ export default function DashboardHome() {
         return d.toISOString().split('T')[0];
       }).reverse();
 
-      // TODO: Replace with actual data from Firestore
-      // This is currently using mock data
+      const performanceQuery = query(
+        collection(db, 'activities'),
+        where('timestamp', '>=', new Date(dates[0])),
+        orderBy('timestamp', 'asc')
+      );
+
+      const snapshot = await getDocs(performanceQuery);
+      const dailyData = dates.map(date => ({
+        date,
+        leads: 0,
+        conversions: 0
+      }));
+
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const date = data.timestamp.toDate().toISOString().split('T')[0];
+        const index = dailyData.findIndex(item => item.date === date);
+        if (index !== -1) {
+          if (data.type === 'lead') dailyData[index].leads++;
+          if (data.type === 'conversion') dailyData[index].conversions++;
+        }
+      });
+
       return {
-        labels: dates.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),
-        leads: [10, 15, 8, 12, 20, 16, 14],
-        conversions: [4, 6, 3, 5, 8, 6, 5]
+        labels: dailyData.map(d => new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })),
+        leads: dailyData.map(d => d.leads),
+        conversions: dailyData.map(d => d.conversions)
       };
     } catch (error) {
       console.error('Error fetching performance data:', error);
