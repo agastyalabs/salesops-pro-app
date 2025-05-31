@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
+import { Box, CssBaseline, Typography } from '@mui/material';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import SidebarLayout from './components/SidebarLayout';
 import ActivityFeed from './components/ActivityFeed';
@@ -13,7 +13,7 @@ import AIDraftEmail from './components/AIDraftEmail';
 import GeminiActivitySummaryPanel from './components/GeminiActivitySummaryPanel';
 import GeminiInsightsPanel from './components/GeminiInsightsPanel';
 import GeminiSmartSearchPanel from './components/GeminiSmartSearchPanel';
-import { LoadingSpinner } from './components/LoadingSpinner'; // Changed this line
+import { LoadingSpinner } from './components/LoadingSpinner';
 import NavigationBar from './components/NavigationBar';
 
 // Theme configuration
@@ -93,32 +93,112 @@ const theme = createTheme({
 // Loading state for the app
 function AppLoading() {
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh' 
-    }}>
-      <LoadingSpinner />
-    </div>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        bgcolor: 'background.default'
+      }}
+    >
+      <LoadingSpinner text="Loading application..." />
+    </Box>
+  );
+}
+
+// Dashboard component
+function Dashboard() {
+  return (
+    <Box sx={{ p: 3 }}>
+      <AISummaryWidget />
+      <AIInsightsPanel />
+      <ActivityFeed />
+    </Box>
+  );
+}
+
+// 404 Component
+function NotFound() {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '80vh'
+      }}
+    >
+      <Typography variant="h2" component="h1" gutterBottom>
+        404: Page Not Found
+      </Typography>
+      <Typography variant="body1" color="text.secondary">
+        The page you're looking for doesn't exist or has been moved.
+      </Typography>
+    </Box>
   );
 }
 
 // Main App Component
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    const initializeApp = async () => {
+      try {
+        // Add any initialization logic here
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Initialization error:', err);
+        setError(err);
+        setIsLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    initializeApp();
+
+    return () => {
+      // Cleanup logic if needed
+    };
   }, []);
 
+  if (error) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            p: 3,
+            bgcolor: 'background.default'
+          }}
+        >
+          <Typography variant="h4" gutterBottom color="error">
+            Unable to load application
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            {error.message || 'An unexpected error occurred. Please try again.'}
+          </Typography>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
   if (isLoading) {
-    return <AppLoading />;
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppLoading />
+      </ThemeProvider>
+    );
   }
 
   return (
@@ -128,72 +208,101 @@ function App() {
         <Router>
           <SidebarLayout>
             <NavigationBar />
-            <Routes>
-              {/* Dashboard Route */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <div>
-                    <AISummaryWidget />
-                    <AIInsightsPanel />
-                    <ActivityFeed />
-                  </div>
-                } 
-              />
+            <Box component="main" sx={{ flexGrow: 1, height: '100vh', overflow: 'auto' }}>
+              <Routes>
+                {/* Dashboard Route */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* AI Features Routes */}
-              <Route 
-                path="/ai-search" 
-                element={
-                  <div>
-                    <AISmartSearch />
-                    <GeminiSmartSearchPanel />
-                  </div>
-                } 
-              />
-              <Route 
-                path="/ai-insights" 
-                element={
-                  <div>
-                    <GeminiInsightsPanel />
-                    <AITagsSuggest />
-                  </div>
-                } 
-              />
-              <Route 
-                path="/email-drafts" 
-                element={
-                  <div>
-                    <AIDraftEmail />
-                    <GeminiActivitySummaryPanel />
-                  </div>
-                } 
-              />
+                {/* AI Features Routes */}
+                <Route 
+                  path="/ai-search" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <AISmartSearch />
+                      <GeminiSmartSearchPanel />
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/ai-insights" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <GeminiInsightsPanel />
+                      <AITagsSuggest />
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/email-drafts" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <AIDraftEmail />
+                      <GeminiActivitySummaryPanel />
+                    </Box>
+                  } 
+                />
 
-              {/* Add more routes for your other components */}
-              <Route path="/customers/*" element={<div>Customers Component</div>} />
-              <Route path="/reports/*" element={<div>Reports Component</div>} />
-              <Route path="/settings/*" element={<div>Settings Component</div>} />
-              <Route path="/integrations/*" element={<div>Integrations Component</div>} />
-              <Route path="/organization/*" element={<div>Organization Component</div>} />
-              <Route path="/subscription/*" element={<div>Subscription Component</div>} />
+                {/* Placeholder Routes */}
+                <Route 
+                  path="/customers/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Customers</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/reports/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Reports</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/settings/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Settings</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/integrations/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Integrations</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/organization/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Organization</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
+                <Route 
+                  path="/subscription/*" 
+                  element={
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="h4">Subscription</Typography>
+                      <Typography variant="body1">Coming soon...</Typography>
+                    </Box>
+                  } 
+                />
 
-              {/* 404 Route */}
-              <Route 
-                path="*" 
-                element={
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    height: '80vh' 
-                  }}>
-                    <h1>404: Page Not Found</h1>
-                  </div>
-                } 
-              />
-            </Routes>
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Box>
           </SidebarLayout>
         </Router>
       </ErrorBoundary>
