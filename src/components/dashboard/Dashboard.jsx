@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import {
   Box,
   Drawer,
@@ -18,7 +19,12 @@ import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
+// Import or create these components
+import DashboardHome from './DashboardHome';
+import Customers from '../customers/CustomerList';
+import Reports from '../reports/Reports';
+import Integrations from '../integrations/Integrations';
 
 const drawerWidth = 240;
 
@@ -47,12 +53,21 @@ export default function Dashboard() {
     { text: 'Integrations', icon: <LayersIcon />, path: '/dashboard/integrations' },
   ];
 
+  const handleMenuClick = (path) => {
+    navigate(path);
+    setMobileOpen(false); // Close mobile drawer after click
+  };
+
   const drawer = (
     <Box>
       <Toolbar />
       <List>
         {menuItems.map((item) => (
-          <ListItem button key={item.text}>
+          <ListItem 
+            button 
+            key={item.text} 
+            onClick={() => handleMenuClick(item.path)}
+          >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
@@ -133,10 +148,12 @@ export default function Dashboard() {
         }}
       >
         <Toolbar />
-        <Typography paragraph>
-          Welcome {currentUser?.email}!
-        </Typography>
-        {/* Add your dashboard content here */}
+        <Routes>
+          <Route path="/" element={<DashboardHome />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/integrations" element={<Integrations />} />
+        </Routes>
       </Box>
     </Box>
   );
