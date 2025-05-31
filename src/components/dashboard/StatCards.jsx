@@ -1,39 +1,39 @@
 import React from 'react';
 import { Grid, Paper, Box, Typography } from '@mui/material';
 import { 
-  TrendingUp as TrendingUpIcon,
-  AccountCircle as AccountCircleIcon,
-  BusinessCenter as BusinessCenterIcon,
-  AttachMoney as AttachMoneyIcon 
-} from '@mui/icons-material';
+  Users,
+  Briefcase,
+  TrendingUp,
+  DollarSign 
+} from 'lucide-react';
 
 export default function StatCards({ stats }) {
   const cards = [
     {
       title: 'Total Leads',
       value: stats.totalLeads,
-      icon: <AccountCircleIcon />,
+      icon: <Users size={24} strokeWidth={1.5} />,
       color: '#2196f3',
       trend: '+12%'
     },
     {
       title: 'Active Deals',
       value: stats.activeDeals,
-      icon: <BusinessCenterIcon />,
+      icon: <Briefcase size={24} strokeWidth={1.5} />,
       color: '#4caf50',
       trend: '+5%'
     },
     {
       title: 'Conversion Rate',
       value: `${stats.conversionRate}%`,
-      icon: <TrendingUpIcon />,
+      icon: <TrendingUp size={24} strokeWidth={1.5} />,
       color: '#ff9800',
       trend: '+2.5%'
     },
     {
       title: 'Total Revenue',
       value: `$${stats.totalRevenue.toLocaleString()}`,
-      icon: <AttachMoneyIcon />,
+      icon: <DollarSign size={24} strokeWidth={1.5} />,
       color: '#9c27b0',
       trend: '+8%'
     }
@@ -64,7 +64,10 @@ export default function StatCards({ stats }) {
                   p: 1, 
                   borderRadius: 2, 
                   bgcolor: `${card.color}20`,
-                  color: card.color
+                  color: card.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 {card.icon}
@@ -79,11 +82,11 @@ export default function StatCards({ stats }) {
                 }}
               >
                 {card.trend}
-                <TrendingUpIcon fontSize="small" />
+                <TrendingUp size={16} strokeWidth={1.5} />
               </Typography>
             </Box>
 
-            <Typography variant="h4" sx={{ mb: 1, color: card.color }}>
+            <Typography variant="h4" sx={{ mb: 1, color: card.color, fontWeight: 600 }}>
               {card.value}
             </Typography>
 
