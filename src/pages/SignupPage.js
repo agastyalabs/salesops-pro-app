@@ -6,27 +6,36 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { auth, db } from '../utils/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useNavigate } from "react-router-dom";
 
 // Use your actual App ID from Firestore rules here
 const appIdString = "1:555072601372:web:af3a40f8d9232012018ed9";
 
-const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => {
+const SignupPage = ({ theme }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [localError, setLocalError] = useState('');
+    const [localSuccess, setLocalSuccess] = useState('');
+    const navigate = useNavigate();
 
     const handleSignup = async (e) => {
         e.preventDefault();
-        setError && setError(null);
-        setSuccess && setSuccess(null);
+        setLocalError('');
+        setLocalSuccess('');
         setIsLoading(true);
+        // Client-side password check (optional)
+        if (password.length < 6) {
+            setLocalError('Password must be at least 6 characters.');
+            setIsLoading(false);
+            return;
+        }
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             if (fullName) {
                 await updateProfile(userCredential.user, { displayName: fullName });
             }
-            // Write the user profile to the nested path required by your Firestore rules
             await setDoc(
                 doc(db, "artifacts", appIdString, "users", userCredential.user.uid),
                 {
@@ -36,19 +45,19 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
                     createdAt: serverTimestamp(),
                 }
             );
-            setSuccess && setSuccess('Account created successfully!');
-            setCurrentViewFunction && setCurrentViewFunction('dashboard');
+            setLocalSuccess('Account created successfully!');
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 1000);
         } catch (error) {
-            if (setError) {
-                if (error.code === 'auth/email-already-in-use') {
-                    setError('This email is already in use. Please log in or use another email.');
-                } else if (error.code === 'auth/invalid-email') {
-                    setError('Invalid email address. Please check and try again.');
-                } else if (error.code === 'auth/weak-password') {
-                    setError('Password should be at least 6 characters.');
-                } else {
-                    setError(error.message || "An unknown error occurred during signup.");
-                }
+            if (error.code === 'auth/email-already-in-use') {
+                setLocalError('This email is already in use. Please log in or use another email.');
+            } else if (error.code === 'auth/invalid-email') {
+                setLocalError('Invalid email address. Please check and try again.');
+            } else if (error.code === 'auth/weak-password') {
+                setLocalError('Password should be at least 6 characters.');
+            } else {
+                setLocalError(error.message || "An unknown error occurred during signup.");
             }
         } finally {
             setIsLoading(false);
@@ -91,6 +100,8 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
                     placeholder="••••••••"
                     required
                 />
+                {localError && <div className="text-red-600 text-sm">{localError}</div>}
+                {localSuccess && <div className="text-green-600 text-sm">{localSuccess}</div>}
                 <button
                     type="submit"
                     disabled={isLoading}
@@ -102,7 +113,7 @@ const SignupPage = ({ setCurrentViewFunction, setError, setSuccess, theme }) => 
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{' '}
                 <button
-                    onClick={() => setCurrentViewFunction && setCurrentViewFunction('login')}
+                    onClick={() => navigate("/login")}
                     className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                     Log in
