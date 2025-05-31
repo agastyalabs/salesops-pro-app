@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
 // Initialize Firebase first
 const firebaseConfig = {
@@ -15,14 +16,18 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
-// Initialize Firebase before rendering
-initializeApp(firebaseConfig);
+// Initialize Firebase and Auth
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-);
+// Ensure auth is initialized before rendering
+auth.onAuthStateChanged(() => {
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </React.StrictMode>
+  );
+});
