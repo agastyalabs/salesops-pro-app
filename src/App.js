@@ -1,55 +1,34 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider } from './contexts/AuthContext';
-import { UserProvider } from './contexts/UserContext';
-import { SubscriptionProvider } from './contexts/SubscriptionContext';
-import { initializeFirebase } from './utils/firebaseInit';
-import { useAuth } from './contexts/AuthContext';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import SidebarLayout from './components/SidebarLayout';
+import ActivityFeed from './components/ActivityFeed';
+import AISmartSearch from './components/AISmartSearch';
+import AIInsightsPanel from './components/AIInsightsPanel';
+import AISummaryWidget from './components/AISummaryWidget';
+import AITagsSuggest from './components/AITagsSuggest';
+import AIDraftEmail from './components/AIDraftEmail';
+import GeminiActivitySummaryPanel from './components/GeminiActivitySummaryPanel';
+import GeminiInsightsPanel from './components/GeminiInsightsPanel';
+import GeminiSmartSearchPanel from './components/GeminiSmartSearchPanel';
+import LoadingSpinner from './components/LoadingSpinner';
+import NavigationBar from './components/NavigationBar';
 
-// Auth Components
-import SignIn from './components/auth/SignIn';
-import SignUp from './components/auth/SignUp';
-import ForgotPassword from './components/auth/ForgotPassword';
-import PrivateRoute from './components/auth/PrivateRoute';
-
-// Main Components
-import LandingPage from './components/landing/LandingPage';
-import Dashboard from './components/dashboard/Dashboard';
-import SubscriptionPlans from './components/subscription/SubscriptionPlans';
-
+// Theme configuration
 const theme = createTheme({
   palette: {
+    mode: 'light',
     primary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
+      main: '#2196f3',
+      light: '#64b5f6',
+      dark: '#1976d2',
     },
     secondary: {
-      main: '#9c27b0',
-      light: '#ba68c8',
-      dark: '#7b1fa2',
-    },
-    success: {
-      main: '#2e7d32',
-      light: '#4caf50',
-      dark: '#1b5e20',
-    },
-    error: {
-      main: '#d32f2f',
-      light: '#ef5350',
-      dark: '#c62828',
-    },
-    warning: {
-      main: '#ed6c02',
-      light: '#ff9800',
-      dark: '#e65100',
-    },
-    info: {
-      main: '#0288d1',
-      light: '#03a9f4',
-      dark: '#01579b',
+      main: '#f50057',
+      light: '#ff4081',
+      dark: '#c51162',
     },
     background: {
       default: '#f5f5f5',
@@ -57,18 +36,18 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.5rem',
-      fontWeight: 500,
+      fontWeight: 600,
     },
     h2: {
       fontSize: '2rem',
-      fontWeight: 500,
+      fontWeight: 600,
     },
     h3: {
       fontSize: '1.75rem',
-      fontWeight: 500,
+      fontWeight: 600,
     },
     h4: {
       fontSize: '1.5rem',
@@ -87,22 +66,9 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
           borderRadius: 8,
-        },
-        contained: {
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow: 'none',
-          },
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          textTransform: 'none',
+          fontWeight: 500,
         },
       },
     },
@@ -113,79 +79,124 @@ const theme = createTheme({
         },
       },
     },
-    MuiTextField: {
+    MuiCard: {
       styleOverrides: {
         root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
-          },
+          borderRadius: 12,
+          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
         },
       },
     },
   },
-  shape: {
-    borderRadius: 8,
-  },
-  shadows: [
-    'none',
-    '0px 2px 1px -1px rgba(0,0,0,0.1),0px 1px 1px 0px rgba(0,0,0,0.07),0px 1px 3px 0px rgba(0,0,0,0.06)',
-    '0px 3px 3px -2px rgba(0,0,0,0.1),0px 2px 4px 0px rgba(0,0,0,0.07),0px 1px 8px 0px rgba(0,0,0,0.06)',
-    // ... add more shadow definitions as needed
-  ],
 });
 
-function AppContent() {
-  const { currentUser } = useAuth();
-
-  useEffect(() => {
-    if (currentUser) {
-      // Initialize Firebase with demo data if needed
-      initializeFirebase(currentUser.uid).catch(console.error);
-    }
-  }, [currentUser]);
-
+// Loading state for the app
+function AppLoading() {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      
-      {/* Protected Routes */}
-      <Route
-        path="/dashboard/*"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/subscription"
-        element={
-          <PrivateRoute>
-            <SubscriptionPlans />
-          </PrivateRoute>
-        }
-      />
-    </Routes>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh' 
+    }}>
+      <LoadingSpinner />
+    </div>
   );
 }
 
+// Main App Component
 function App() {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <AppLoading />;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <AuthProvider>
-          <UserProvider>
-            <SubscriptionProvider>
-              <AppContent />
-            </SubscriptionProvider>
-          </UserProvider>
-        </AuthProvider>
-      </Router>
+      <ErrorBoundary>
+        <Router>
+          <SidebarLayout>
+            <NavigationBar />
+            <Routes>
+              {/* Dashboard Route */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <div>
+                    <AISummaryWidget />
+                    <AIInsightsPanel />
+                    <ActivityFeed />
+                  </div>
+                } 
+              />
+
+              {/* AI Features Routes */}
+              <Route 
+                path="/ai-search" 
+                element={
+                  <div>
+                    <AISmartSearch />
+                    <GeminiSmartSearchPanel />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/ai-insights" 
+                element={
+                  <div>
+                    <GeminiInsightsPanel />
+                    <AITagsSuggest />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/email-drafts" 
+                element={
+                  <div>
+                    <AIDraftEmail />
+                    <GeminiActivitySummaryPanel />
+                  </div>
+                } 
+              />
+
+              {/* Add more routes for your other components */}
+              <Route path="/customers/*" element={<div>Customers Component</div>} />
+              <Route path="/reports/*" element={<div>Reports Component</div>} />
+              <Route path="/settings/*" element={<div>Settings Component</div>} />
+              <Route path="/integrations/*" element={<div>Integrations Component</div>} />
+              <Route path="/organization/*" element={<div>Organization Component</div>} />
+              <Route path="/subscription/*" element={<div>Subscription Component</div>} />
+
+              {/* 404 Route */}
+              <Route 
+                path="*" 
+                element={
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '80vh' 
+                  }}>
+                    <h1>404: Page Not Found</h1>
+                  </div>
+                } 
+              />
+            </Routes>
+          </SidebarLayout>
+        </Router>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }
