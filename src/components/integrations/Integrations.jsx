@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PendingIcon from '@mui/icons-material/Pending';
 
 export default function Integrations() {
   const [integrations, setIntegrations] = useState([
@@ -129,4 +128,35 @@ export default function Integrations() {
                         label="Disconnected" 
                         color="default" 
                         size="small"
-                        icon={<Pen
+                      />
+                    )}
+                  </Stack>
+                }
+              />
+              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  {integration.description}
+                </Typography>
+                {integration.status === 'connected' && (
+                  <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
+                    Last synced: {integration.lastSync}
+                  </Typography>
+                )}
+              </CardContent>
+              <CardActions>
+                <Button 
+                  size="small" 
+                  color={integration.status === 'connected' ? 'error' : 'primary'}
+                  onClick={() => handleToggleIntegration(integration.id)}
+                >
+                  {integration.status === 'connected' ? 'Disconnect' : 'Connect'}
+                </Button>
+                <Button size="small">Settings</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+}
