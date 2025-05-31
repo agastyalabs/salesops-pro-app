@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // Initialize Firebase first
 const firebaseConfig = {
@@ -20,14 +20,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Ensure auth is initialized before rendering
-auth.onAuthStateChanged(() => {
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </React.StrictMode>
-  );
+let hasRendered = false;
+
+// Wait for initial auth state before rendering
+onAuthStateChanged(auth, (user) => {
+  if (!hasRendered) {
+    hasRendered = true;
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <React.StrictMode>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </React.StrictMode>
+    );
+  }
 });
