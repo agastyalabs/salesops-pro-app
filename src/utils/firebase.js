@@ -1,11 +1,9 @@
-// src/utils/firebase.js
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-// import { getAnalytics } from "firebase/analytics"; // Optional: if you plan to use Firebase Analytics
+// import { getAnalytics } from "firebase/analytics"; // Optional
 
 // --- Firebase Configuration ---
-// Values will be read from Environment Variables set in Render (e.g., REACT_APP_FIREBASE_API_KEY)
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "YOUR_FALLBACK_API_KEY",
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "YOUR_FALLBACK_AUTH_DOMAIN",
@@ -20,21 +18,17 @@ const firebaseConfig = {
 let app;
 let auth;
 let db;
-// let analytics; 
 
 try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
     // if (firebaseConfig.measurementId && typeof getAnalytics === 'function') { 
-    //   analytics = getAnalytics(app); // Initialize if measurementId is present
+    //   analytics = getAnalytics(app); // If using analytics
     // }
 } catch (e) {
     console.error("Error initializing Firebase in firebase.js:", e);
-    // You might want to throw the error or handle it in a way that your app can react to it,
-    // e.g., by setting a global error state.
 }
 
-// Export the initialized services and the config for use elsewhere
 export { app, auth, db, firebaseConfig };
 export const currentAppId = firebaseConfig.appId || 'default-salesops-app';
