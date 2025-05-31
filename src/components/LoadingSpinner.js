@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LoadingSpinner = ({ text = '', size = 'md' }) => (
+const LoadingSpinner = ({ text = '', size = 'md' }) => (
   <div className="flex items-center justify-center space-x-2 py-4">
     <svg
       className="animate-spin text-blue-600 dark:text-blue-400"
@@ -26,3 +26,5 @@ export const LoadingSpinner = ({ text = '', size = 'md' }) => (
     {text && <span className="text-gray-500 dark:text-gray-300">{text}</span>}
   </div>
 );
+
+export default LoadingSpinner;
