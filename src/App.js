@@ -9,7 +9,7 @@ import Contacts from "./pages/Contacts";
 import Deals from "./pages/Deals";
 import Activities from "./pages/Activities";
 import LoginPage from "./pages/LoginPage";
-// import SignupPage from "./pages/SignupPage"; // Uncomment if using signup
+// import SignupPage from "./pages/SignupPage"; // Uncomment if you add signup
 
 function App() {
   const [user, setUser] = useState(null);
