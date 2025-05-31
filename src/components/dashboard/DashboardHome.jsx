@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -26,6 +26,57 @@ import { collection, query, getDocs, where, orderBy, limit } from 'firebase/fire
 import { db } from '../../config/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 
+const MetricCard = ({ title, value, icon, color }) => (
+  <Card>
+    <CardContent>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <Avatar sx={{ bgcolor: `${color}.main`, mr: 2 }}>
+          {icon}
+        </Avatar>
+        <Typography variant="h6" component="div">
+          {title}
+        </Typography>
+      </Box>
+      <Typography variant="h4" component="div" gutterBottom>
+        {typeof value === 'number' && title.includes('Revenue') 
+          ? `$${value.toLocaleString()}` 
+          : value.toLocaleString()}
+      </Typography>
+    </CardContent>
+  </Card>
+);
+
+const ActivityItem = ({ activity, showDivider }) => (
+  <>
+    <ListItem alignItems="flex-start">
+      <ListItemAvatar>
+        <Avatar>{activity.type?.[0]?.toUpperCase() || 'A'}</Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={activity.description}
+        secondary={activity.timestamp?.toDate?.().toLocaleString() || 'N/A'}
+      />
+    </ListItem>
+    {showDivider && <Divider />}
+  </>
+);
+
+const QuickActionCard = ({ icon, title, onClick, color }) => (
+  <Paper
+    sx={{
+      p: 2,
+      textAlign: 'center',
+      cursor: 'pointer',
+      '&:hover': { bgcolor: 'action.hover' },
+      transition: 'background-color 0.3s'
+    }}
+    onClick={onClick}
+  >
+    {React.cloneElement(icon, { sx: { fontSize: 40, color: `${color}.main`, mb: 1 } })}
+    <Typography>{title}</Typography>
+  </Paper>
+);
+
 export default function DashboardHome() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -42,20 +93,12 @@ export default function DashboardHome() {
       if (!currentUser) return;
 
       try {
-        // Check if any data exists
-        const customersQuery = query(
-          collection(db, 'customers'),
-          where('organizationId', '==', currentUser.uid),
-          limit(1)
-        );
-        const customersSnapshot = await getDocs(customersQuery);
-
         // Get total customers
-        const customersCountQuery = query(
+        const customersQuery = query(
           collection(db, 'customers'),
           where('organizationId', '==', currentUser.uid)
         );
-        const customersCountSnapshot = await getDocs(customersCountQuery);
+        const customersSnapshot = await getDocs(customersQuery);
         
         // Get active deals
         const dealsQuery = query(
@@ -91,7 +134,7 @@ export default function DashboardHome() {
         }));
 
         setMetrics({
-          totalCustomers: customersCountSnapshot.size,
+          totalCustomers: customersSnapshot.size,
           activeDeals: dealsSnapshot.size,
           monthlyRevenue,
           recentActivities
@@ -112,26 +155,6 @@ export default function DashboardHome() {
 
     fetchDashboardData();
   }, [currentUser]);
-
-  const MetricCard = ({ title, value, icon, color }) => (
-    <Card>
-      <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar sx={{ bgcolor: `${color}.main`, mr: 2 }}>
-            {icon}
-          </Avatar>
-          <Typography variant="h6" component="div">
-            {title}
-          </Typography>
-        </Box>
-        <Typography variant="h4" component="div" gutterBottom>
-          {typeof value === 'number' && title.includes('Revenue') 
-            ? `$${value.toLocaleString()}` 
-            : value.toLocaleString()}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
 
   if (loading) {
     return (
@@ -186,7 +209,7 @@ export default function DashboardHome() {
         </Grid>
       </Grid>
 
-      {/* Recent Activities */}
+      {/* Recent Activities and Quick Actions */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Card>
@@ -195,18 +218,11 @@ export default function DashboardHome() {
               <List>
                 {metrics.recentActivities.length > 0 ? (
                   metrics.recentActivities.map((activity, index) => (
-                    <React.Fragment key={activity.id}>
-                      <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                          <Avatar>{activity.type?.[0]?.toUpperCase() || 'A'}</Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={activity.description}
-                          secondary={activity.timestamp?.toDate?.().toLocaleString() || 'N/A'}
-                        />
-                      </ListItem>
-                      {index < metrics.recentActivities.length - 1 && <Divider />}
-                    </React.Fragment>
+                    <ActivityItem
+                      key={activity.id}
+                      activity={activity}
+                      showDivider={index < metrics.recentActivities.length - 1}
+                    />
                   ))
                 ) : (
                   <ListItem>
@@ -218,39 +234,26 @@ export default function DashboardHome() {
           </Card>
         </Grid>
 
-        {/* Quick Actions */}
         <Grid item xs={12} md={6}>
           <Card>
             <CardHeader title="Quick Actions" />
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: 'action.hover' }
-                    }}
+                  <QuickActionCard
+                    icon={<PersonIcon />}
+                    title="Add Customer"
                     onClick={() => navigate('/dashboard/customers/new')}
-                  >
-                    <PersonIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                    <Typography>Add Customer</Typography>
-                  </Paper>
+                    color="primary"
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: 'action.hover' }
-                    }}
+                  <QuickActionCard
+                    icon={<BusinessCenterIcon />}
+                    title="New Deal"
                     onClick={() => navigate('/dashboard/deals/new')}
-                  >
-                    <BusinessCenterIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-                    <Typography>New Deal</Typography>
-                  </Paper>
+                    color="success"
+                  />
                 </Grid>
               </Grid>
             </CardContent>
